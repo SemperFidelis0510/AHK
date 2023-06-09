@@ -1,0 +1,245 @@
+﻿#NoEnv
+#Warn
+SendMode Input
+SetWorkingDir %A_ScriptDir%
+#Include utils.ahk
+#Include constants.ahk
+#Include gui_menus.ahk
+
+;~ LyX
+lyx_print_macro() {
+	local f_ind
+	f_ind := LTrim(A_ThisHotkey, "^Numpad")
+	print_text(equ[f_ind])
+	return
+}
+
+lyx_store_formula(formula) {
+	local handle
+	guiFormula := formula
+	lyx_gui("create")
+	if (formula = "")
+		GuiControl, Choose, % TypeList, 2
+	else
+		GuiControl, Choose, % TypeList, 1
+
+	Gui, Add, Button, x100 y100 w100 h30 gOK, OK
+	Gui, Add, Button, x200 y100 w100 h30 gCan, Cancel
+	Gui, Add, Button, x300 y100 w100 h30 gDel, Delete
+	Gui, Show, w500 h150, Store Formula
+	return
+
+	OK:
+		Gui, Submit
+		lyx_gui("ok", guiType, guiName, guiParent, guiFormula)
+		return
+	Can:
+		Gui, Destroy
+		return
+	Del:
+		Gui, Submit
+		if (guiType = "menu")
+			lyx_gui("delete", guiType, guiParent)
+		else
+			lyx_gui("delete", guiType, guiName, guiParent)
+		return
+}
+
+lyx_save_macro(formula) {
+	equ.Push(formula)
+	i := equ.length()
+	Hotkey, IfWinActive, ahk_exe LyX.exe
+	Hotkey, ^Numpad%i%, lyx_print_formula
+	return
+}
+
+lyx_append_uranus(file, formula, title="") {
+	local lines
+	lines := []
+
+	if title
+	{
+		lines.push("\begin_layout Subsection")
+		lines.push(title)
+		lines.push("\end_layout")
+	}
+
+	lines.push("\begin_layout Standard")
+	lines.push("\begin_inset Formula")
+	lines.push("\[")
+	lines.push(formula)
+	lines.push("\]")
+	lines.push(" ")
+	lines.push("\end_inset")
+	lines.push(" ")
+	lines.push("\end_layout")
+	lines.push(" ")
+
+	append_to_file(file, lines, -4)
+	return
+}
+
+;~ sumatra
+pdf_to_favorite() {
+	local win, f_ind
+	win := "ahk_id " . WinExist("ahk_exe SumatraPDF.exe")
+	f_ind := LTrim(A_ThisHotkey, "^Numpad")
+	ControlSend,, ^{g}, % win
+	ControlSendRaw,, % bm[f_ind], % win
+	ControlSend,, {enter}, % win
+
+	return
+}
+
+sumatra_annotate(txt, position) {
+	local fs, win
+	;~ if WinExist("Annotations") {
+		;~ ControlSend, Button3, {Enter}, Annotations
+	;~ }
+	if (txt = "")
+		return
+	CoordMode, Mouse, Screen
+	win := "ahk_id " . WinExist("ahk_exe SumatraPDF.exe")
+
+	x := position[1]
+	Y := position[2]
+	DllCall("SetCursorPos", "int", X , "int", Y)
+	fs := fullscreen(0, win)
+	ControlSend,, {q}, % win
+	WinWait, Annotations,, 5
+	fullscreen(fs, win)
+	ControlSend, Edit1, %txt%, Annotations
+	ControlSend, Button4, {enter}, Annotations
+	WinClose, Annotations
+	WinWaitClose, Annotations
+	WinActivate, win
+
+	return
+}
+
+sumatra_save_page() {
+	local txt, i, win
+	win := "ahk_id " . WinExist("ahk_exe SumatraPDF.exe")
+	fs := fullscreen("return", win)
+
+	if fs {
+		ControlSend,, ^{g}, % win
+		WinWait, Go to page
+		win := "ahk_id " . WinExist("Go to page")
+	}
+
+	ControlGetText, txt, Edit1, % win
+	bm.Push(txt)
+	i := bm.length()
+	Hotkey, IfWinActive, ahk_exe SumatraPDF.exe
+	Hotkey, ^Numpad%i%, pdf_to_favorite
+
+	if fs {
+		;~ msgbox % win
+		ControlSend,, {enter}, % win
+	}
+	return
+}
+
+sumatra_save_ref(index) {
+	local img, X, Y, doc
+	if not index {
+		InputBox, index, Reference Index, What is the index of the reference?
+		sleep, 500
+	}
+
+	WinGetTitle, doc, ahk_exe sumatra.exe
+	doc := make_file_name(doc)
+
+	img := capture_img("\sumatra\" . doc)
+	ref_cache[index] := LoadPicture(img)
+
+	coordmode, mouse, screen
+	MouseGetPos, X, Y
+	tooltip_img(ref_cache[index], [X-50,Y-50])
+	msgbox % ref_cache[index]
+	;~ MouseGetPos, X, Y
+	;~ tooltip_img(img, [X,Y])
+
+	return
+}
+
+sumatra_show_ref(pos) {
+	local index, X, Y
+	index := get_selected_text()
+	if not index
+		Input, index, Reference Index, What is the index of the reference?
+
+	;~ msgbox, % ref_cache[index]
+	coordmode, mouse, screen
+	MouseGetPos, X, Y
+	;~ splashimage, % "HBITMAP:*" . ref_cache[index], b x0 y0,,, MouseImageID
+	tooltip_img(ref_cache[index], [X-50,Y-50])
+	return
+}
+
+;~ rainmeter
+RM_layout(name){
+	local path := paths["pandora"] . "\rainmeter\" . name
+	msgbox % path
+	Run % path
+	return
+}
+
+rainmeter(){
+	Switch layout
+	{
+		Case 0:
+			RM_layout("top")
+			layout = 1
+		Case 1:
+			RM_layout("empty")
+			layout = 0
+		Default:
+			RM_layout("empty")
+			layout = 0
+	}
+	return
+}
+
+;~ spotify
+Spotify(cmd){
+	global path
+	switch cmd
+	{
+		case "run":
+			browser("Spotify")
+		case "like song":
+			run_cmd("spt playback --like")
+		case "save to playlist":
+			InputBox, playlist, Save to Playlist, Choose playlist
+			run_cmd(path.revise("pandora", "Spotify\spotify_control.py"), ["add", playlist], 0,,, 1)
+		case "play playlist":
+			InputBox, playlist, Play to Playlist, Choose playlist
+			run_cmd(path.revise("pandora", "Spotify\spotify_control.py"), ["play", playlist],0,,, 1)
+	}
+	return
+}
+
+;~ whatsapp
+send_love_emojis(){
+	local i
+	l_smilies := ["💓", "💓💓💓", "🥰", "🥰🥰🥰", "😍", "😍😍😍", "💛", "💗", "💝️", "♥️", "♥♥♥️"]
+	InputBox, n, "Number of Emojis", "Enter number of emojis"
+	Loop, %n%{
+		Random, i, 1, l_smilies.length()
+		v := l_smilies[i]
+		Send {Text}%v%
+	}
+	return
+}
+
+
+
+
+
+
+
+
+
+

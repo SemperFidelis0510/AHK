@@ -1,0 +1,633 @@
+﻿SetWorkingDir %A_ScriptDir%
+#include constants.ahk
+#include programs.ahk
+#include utils.ahk
+#include paths.ahk
+#Include context_menu.ahk
+;~ #include Gdip_All.ahk
+;~ #include binreadwrite.ahk
+
+;indexers
+find_prog(name) {
+	local path1 := paths["startmenu"] . "\*.lnk"
+	local path2 := paths["startmenuLocal"] . "\*.lnk"
+	local targetPath, targetDir
+
+	Loop, Files, %path1%, R
+	{
+		IfInString, A_LoopFileName, %name%
+		{
+			FileGetShortcut, %A_LoopFileFullPath%, targetPath, targetDir
+			return {"dir": targetDir, "path": targetPath}
+		}
+
+	}
+
+	Loop, Files, %path2%, R
+	{
+		IfInString, A_LoopFileName, %name%
+		{
+			FileGetShortcut, %A_LoopFileFullPath%, targetPath, targetDir
+			return {"dir": targetDir, "path": targetPath}
+		}
+
+	}
+	return
+}
+
+;sensors
+listen() {
+	local cmd, args
+	local prefix := "cmd"
+	local boxsize := [800, 400]
+
+	local commands := {"run": "Runs command or script via cmd."
+					,"find": "Look for a program's location."
+					,"search|(google/books/wikipedia/torrent/arxiv/translate)": "Search site for text."
+					,"(open/get)|new": "Opens/Gets newest file in folder."
+					,"(open/get)|path": "Opens/Gets path of program or folder by name."
+					,"add|(path/hotstring)": "Adds path or hotstring to AHK cache."}
+	local msg := "Enter command:`n`n"
+	For key, val in commands
+		msg .= key . ":`n`t`t" . val . "`n`n"
+
+
+	InputBox, args, Command Hub, %msg%,, % boxsize[1], % boxsize[2]
+	If ErrorLevel
+		return
+
+	args := StrSplit(args, [" | ", " : ", "| ", ": ", " |", " :", "|", ":"])
+
+
+
+	If (args.Length()=1)
+		cmd := args.RemoveAt(1)
+	Else {
+		prefix := args.RemoveAt(1)
+		cmd := args.RemoveAt(1)
+	}
+
+	Loop, args.Length()
+	{
+		if (args[%A_Index%]="clip")
+			args[%A_Index%] := Clipboard
+	}
+
+
+	Switch prefix {
+		Case "find":
+			open_prog_location(cmd)
+		Case "search":
+			search_web(args[1], cmd)
+		Case "get":
+			Switch cmd {
+				Case "new" | "newest":
+					local OP := get_newest_file(args[1])
+					Clipboard := OP["file"]
+				Case "path":
+					Clipboard := paths[args[1]]
+			}
+		Case "open":
+			Switch cmd {
+				Case "new" | "newest":
+					local OP := get_newest_file(args[1])
+					run % OP["file"]
+				Case "path":
+					if (args[1]="libraries")
+						args[1] := "CabinetWClass"
+
+					run % paths[args[1]]
+			}
+		Case "add":
+			Switch cmd {
+				Case "path":
+					if InStr(args[2], ",")
+					{
+						local tmp := StrSplit(args[2], ",")
+						args[2] := "paths[" . quote(tmp[1]) . "] . " . quote(tmp[2])
+					}
+					Else
+						args[2] := quote(args[2])
+
+					local line :=  "paths[" . quote(args[1]) . "] := " . args[2] . "`n"
+
+					append_to_file(paths["ahk"] . "\path.ahk", line)
+				Case "hotstring":
+					local line :=  "::" . args[1] . "::" . args[2] . "`n"
+					append_to_file(paths["ahk"] . "\hotstrings.ahk", line)
+			}
+		Case "run":
+			run_cmd(cmd, args)
+		Default:
+			browser("cmd")
+	}
+
+	return
+}
+
+fullscreen(fs:=1, win:="A") {
+	local state
+	win := WinExist(win)
+	WinGet, prog, ProcessName, ahk_id %win%
+
+	if (prog = "ONENOTE.EXE") {
+		ControlGetPos,,, W,, OneNote::DocumentCanvas1, ahk_exe ONENOTE.exe
+		if (W = 1921)
+			state := 1
+		else
+			state := 0
+	}
+	else {
+		wingetpos,,,, h, ahk_id %win%
+		if (h = 1080)
+			state := 1
+		else
+			state := 0
+	}
+
+	if (fs = "return")
+		return state
+	if (fs != state)
+		ControlSend,, {F11}, ahk_id %win%
+
+	return state
+}
+
+get_selected_text(){
+	static focus := {}
+	focus["aWin"] := WinActive("A")
+	focus["clipboard"] := 0
+
+	tmp := Clipboard
+	Clipboard =
+	Send, ^c
+	ClipWait, 0.5
+	if Clipboard
+		focus["clipboard"] := Clipboard
+	Clipboard := tmp
+	ClipWait, 0.5
+	return focus["clipboard"]
+}
+
+det_screen(Xcoo, Ycoo){
+	local scr, Xin, Yin
+	Loop % screens["count"]{
+		Xin := 2*abs(Xcoo-screens["COM"][A_index][1])<screens["dim"][A_index][1]
+		Yin := 2*abs(Ycoo-screens["COM"][A_index][2])<screens["dim"][A_index][2]
+		if (Xin and Yin)
+			return A_index
+	}
+
+}
+
+get_lang(win:="A") {
+	local lang := {67699721: "EN", -264436723: "HE"}
+	if (win="A")
+		win := WinActive("A")
+	aac1:= % DllCall("GetKeyboardLayout", Int ,DllCall("GetWindowThreadProcessId", int ,win, Int ,0))
+	return lang[aac1]
+}
+
+get_newest_file(folder, time:=0, timeout:=10) {
+	local newest := False
+	local flag := False
+	local ping := A_TickCount
+	if (time = "now")
+		time := A_NowUTC
+	While not flag {
+		Loop, %folder%\*.* {
+			 If (A_LoopFileTimeModified >= time)
+				time := A_LoopFileTimeModified, newest := A_LoopFileLongPath, flag := True
+		}
+		if (A_TickCount >= (ping + 1000*timeout))
+			return 0
+	}
+	return {"file": newest, "time": time}
+}
+
+get_clip_img(path, name:=0) {
+	local time := A_NowUTC
+	run_cmd("themis", ["--saveclip", path, "--name", name], 0)
+	path := get_newest_file(path, time)
+	return path["file"]
+}
+
+capture_img(path:=False, name:=0) {
+	local
+	if not path
+		path := paths["memory"]
+	else if (SubStr(path, 1, 1) = "\")
+		path := paths["memory"] . path
+
+	Send, +#{s}
+	ClipWait, 20, 1
+	Sleep, 4000
+
+	file := get_clip_img(path, name)
+	return file
+}
+
+class BB {
+	get(mode:="win") {
+		if (mode = "win")
+			win := WinActive("A")
+		else if (mode = "mouse")
+			MouseGetPos,,, win
+		this.active := win
+		this.get_clip()
+		this.get_mouse()
+		this.screen := det_screen(this.mouse[1], this.mouse[2])
+	}
+
+	text[when:="before"] {
+		get {
+			if (when = "now") {
+				this.get()
+			}
+			return this.clip
+		}
+	}
+
+	path[when:="before"] {
+		get {
+			if (when = "now")
+				this.get()
+			return this.clip
+		}
+	}
+
+	active {
+		set {
+			this.aWin["id"] := value
+			WinGet, pname, ProcessName, % "ahk_id" . value
+			this.aWin["name"] := pname
+		}
+	}
+
+	get_mouse(mode:="screen") {
+		local X, Y
+		CoordMode, TargetType, % mode
+		MouseGetPos, X, Y,, cont
+		this.mouse := [X, Y]
+		this.focus_control := cont
+	}
+
+	get_clip() {
+		tmp := Clipboard
+		Clipboard :=
+		Send, ^c
+		ClipWait, 0.5
+		if Clipboard
+			this.clip := Clipboard
+		Clipboard := tmp
+		ClipWait, 0.5
+	}
+}
+
+
+
+;motors
+clip_to_mouse() {
+	local file
+	Send, +#{s}
+	ClipWait, 20, 1
+	Sleep, 4000
+
+	file := get_clip_img(paths["memory"] . "\clips", "clip_image_" . timestamp())
+	tooltip_img(file)
+
+	return
+}
+
+close_win() {
+	;~ #If not (WinActive("Minecraft") or WinActive("ahk_exe lyx.exe") or WinActive("ahk_exe PDFXEdit.exe") or WinActive("ahk_exe Mathematica.exe"))
+	id := WinActive("A")
+	Send, {Escape}
+	sleep 200
+
+	if (id=WinActive("A")) {
+		msgbox, 1, Quit, Are you sure you want to exit the program?, 10
+		IfMsgBox, OK
+			Send !{F4}
+	}
+	return
+}
+
+run_cmd(cmd, raw_args:=0, apperent:=0, admin:=0, work_dir:="", python:=0){
+	local key, val, x
+	local args := []
+	local size := ""
+	if not raw_args
+		raw_args := []
+
+	if paths.scripts[cmd] {
+		cmd := paths.scripts[cmd]
+		python := true
+	}
+	else if (cmd = "")
+		InputBox, cmd, "Command", "Enter command:"
+	if (cmd = "")
+		return
+
+	cmd := format_cmd(cmd)
+	For key, val in raw_args
+		args[key] := format_cmd(val)
+	cmd := join(,cmd, args*)
+
+	if python {
+		if ((apperent > 0) and not debug)
+			cmd := "python " . cmd
+		else
+			cmd := "pythonw " . cmd
+
+	}
+	if (apperent>0)
+		cmd := " /k " . cmd
+	else {
+		cmd := " /c " . cmd
+		size := "Hide"
+	}
+
+
+	if ((apperent=2) or (debug="cmd"))
+		msgbox, 6, Command to cmd, %cmd%
+
+	if admin
+		Run, *RunAs %comspec%%cmd%, %work_dir%, %size%
+	else
+		Run, %comspec%%cmd%, %work_dir%, %size%
+
+	return
+}
+
+place_window(state:=1, Win:="A") {
+	local aWin, s, i, j, scale, scr, windows
+	Scale := 0.8
+	aWin := WinActive(Win)
+	if (not aWin)
+	    return
+
+	switch state {
+		case "max":
+			WinMaximize, ahk_id %aWin%
+		case "min":
+			WinMinimize, ahk_id %aWin%
+			return
+		case "unmax":
+			WinGetPos, xpos, ypos, wid, hit, ahk_id %aWin%
+			scr := det_screen(xpos+(wid/2), ypos+(hit/2))
+			WinGet, min_max, MinMax, ahk_id %aWin%
+			if (min_max = 1)
+				WinRestore, ahk_id %aWin%
+			WinMove, ahk_id %aWin%,,% screens["Xrange"][scr][1], % screens["Yrange"][scr][1]
+									, % Scale*screens["dim"][scr][1], % Scale*screens["dim"][scr][2]
+		case "unmin":
+			WinGet, windows, List
+			Loop, %Windows% {
+				i := Windows - A_Index + 1
+				WinGet, min_max, MinMax, % "ahk_id" windows%i%
+				if (min_max = -1) {
+					WinActivate % "ahk_id" windows%i%
+					WinWaitActive % "ahk_id" windows%i%
+					return
+				}
+			}
+		case 1, 2, 3, 4:
+			if (debug="screen")
+			{
+				msgbox % "screen number sent: " . state
+				msgbox % "system screen name: " . screens["order"][state]
+				msgbox % screens["enum"][screens["order"][state]]
+			}
+
+			scr := screens["enum"][screens["order"][state]]
+			WinGetPos, xpos, ypos, wid, hit, ahk_id %aWin%
+			;~ msgbox % scr
+			if (scr = det_screen(xpos+(wid/2), ypos+(hit/2)))
+				return
+
+			WinGet, min_max, MinMax, ahk_id %aWin%
+			if (min_max = 1)
+				WinRestore, ahk_id %aWin%
+			WinMove, ahk_id %aWin%,, % screens["Xrange"][scr][1], % screens["Yrange"][scr][1]
+									, % 0.5*screens["dim"][scr][1], % 0.5*screens["dim"][scr][2]
+
+			if (debug="screen")
+			{
+				msgbox % screens["Xrange"][scr][1]
+				msgbox % screens["Yrange"][scr][1]
+			}
+			if (min_max = 1)
+				place_window("max", Win)
+			else
+				place_window("unmax", Win)
+	}
+	if (Win = "A") {
+		WinActivate ahk_id %aWin%
+		WinWaitActive ahk_id %aWin%
+	}
+	return
+}
+
+search_web(text:=0, site:="google"){
+	static engine
+	if text = 0
+		text =
+
+	switch site{
+		case "books":
+			engine := "https://b-ok.asia/s/?q="
+		case "translate":
+			if RegExMatch(text, "[a-zA-Z]")
+				engine := "https://translate.google.com/?sl=en&tl=iw&op=translate&text="
+			else
+				engine := "https://translate.google.com/?sl=iw&tl=en&op=translate&text="
+		case "wikipedia":
+			engine := "https://en.wikipedia.org/w/index.php?title=Special%3ASearch&search="
+		case "arxiv":
+			engine := "https://arxiv.org/search/?searchtype=all&source=header&query="
+		case "torrent":
+			engine := "https://rarbgtor.org/torrents.php?search="
+		case "ahk":
+			engine := "https://www.autohotkey.com/docs/v1/lib/"
+			txt .= ".htm"
+		Default:
+		engine := "http://www.google.com/search?q="
+	}
+	query := engine . EncodeDecodeURI(text)
+	Run, %query%
+	return
+}
+
+open_regedit(registry:=""){
+	if not registry
+		registry := "HKEY_CURRENT_USER"
+	run_cmd(pathclass["regjump"], [registry],0, 1)
+	return
+}
+
+browser(name, browse:="window", screen:=0, fs:=false){
+	local
+	global paths, debug
+	path := paths[name]
+
+	If (debug="browser")
+		msgbox % path
+
+	switch browse{
+		case "window", "tab":
+			name := "ahk_exe " . name . ".exe"
+		case "folder":
+			name := "ahk_class " . name
+			path := "explor " . path
+		case "group":
+			name := "ahk_group " . name
+		case "setting":
+			path := name
+			name := "ahk_exe " . name . ".exe"
+	}
+
+	if WinExist(name) {
+		if WinActive(name) {
+			switch browse {
+				case "tab":
+					Send, ^{TAB}
+				default:
+					WinActivateBottom, %name%
+			}
+		}
+		else
+			WinActivate, %name%
+	}
+	else {
+		try {
+			Run %path%
+			WinWait %name%
+			WinActivate, %name%
+			WinWaitActive, %name%
+		}
+	}
+	if screen != 0
+		place_window(screen)
+	WinWaitActive, %name%
+	if fs
+		fullscreen(1)
+
+	return
+}
+
+print_text(string){
+	temp = %Clipboard%
+	Clipboard := string
+	ClipWait 2
+	Send, ^{v}
+	Sleep, 100
+	Clipboard = %temp%
+	return
+}
+
+tooltip_img(img, rect:="dynamic", box_size:="default", fps:=50, halt:=false, coo_Ref:="screen", box_color:="44FF44") {
+	local
+	rate := Ceil(1000/fps)
+	shf := 15
+
+	if not halt {
+		if (rect="dynamic")
+			halt := "LButton"
+		else
+			halt := "Escape"
+	}
+
+	if img is not integer
+		img := LoadPicture(img)
+
+	if (rect!="dynamic") {
+		if (box_size="default")
+			box_size:=[110, 60]
+		if rect[1] is integer
+			rect := [rect, [rect[1]+box_size[1], rect[2]+box_size[2]]]
+	}
+	else
+		rect := False
+
+	Gui, ClipImg:new, -Caption +ToolWindow +alwaysontop
+	Gui, Margin, 1, 1
+	Gui, Color, %box_color%
+	Gui, add, Picture, +HwndPicGUI, HBITMAP:*%img%
+	Gui, show, AutoSize
+
+	coordmode, mouse, %coo_ref%
+	Loop {
+		mousegetpos, x, y
+		x+=shf
+		y+=shf
+
+		If rect and not in_rect([x,y], rect) {
+			if (debug=3) {
+				msgbox, % x . ":" . rect[1][1]
+				msgbox, % y . ":" . rect[1][2]
+			}
+			Break
+		}
+		else
+			Gui, ClipImg:show, X%x% Y%y%
+
+
+		sleep, rate
+	} until (GetKeyState(halt, "P") or GetKeyState("escape", "P"))
+	return
+}
+
+refresh_prog(id:="A", save:=False) {
+	local exe
+	id := "ahk_id " . id
+	WinGet, exe, ProcessPath, %id%
+
+	if save
+		ControlSend,, ^{s}, %id%
+
+	WinClose, %id%
+	WinWaitClose, %id%
+	RunWait, ahk_exe %exe%
+	return
+}
+
+open_prog_location(name:=False) {
+	local path
+	if not name
+		InputBox, name, Open Program Location, What is the name of the program you would like to look for?
+
+	path := find_prog(name)
+	msgbox % path["dir"]
+	Run % path["dir"]
+	return
+}
+
+get_pic() {
+	CoordMode, Mouse, Screen
+	Send, +#{s}
+	ClipWait, 20
+	run_cmd("themis", ["--clipimg"], 0)
+	browser("ONENOTE",, 2)
+	MouseClick,, -1800, 1300
+	Send, ^{v}
+	return
+}
+
+remember(item) {
+	return
+}
+
+recall(path) {
+	return
+}
+
+Reload_SciTE() {
+	local
+	win := WinExist("ahk_exe SciTE.exe")
+	WinGetTitle, win,
+	return
+}
+
+
+

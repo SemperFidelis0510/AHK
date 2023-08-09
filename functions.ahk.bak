@@ -65,6 +65,13 @@ generateMenus()
 
 
 ; ideas
+voice_to_chatgpt() {
+	WinActivate, ahk_exe ChatGPT.exe
+	MClick(-1139, 881)
+	Send {LAlt down}{Shift down}{b}{LAlt up}{Shift up}
+	return
+}
+
 class LyxConsole {
 	NPHwnd := 0
 	__New {
@@ -236,9 +243,9 @@ det_screen(Xcoo, Ycoo){
 
 }
 
-get_clip_img(path, name:=0) {
+get_clip_img(paths, path, name:=0) {
 	local time := A_NowUTC
-	run_cmd("themis", ["--saveclip", path, "--name", name], 0)
+	run_cmd(paths, "themis", ["--saveclip", path, "--name", name], 2)
 	path := get_newest_file(path, time)
 	return path["file"]
 }
@@ -254,7 +261,7 @@ capture_img(paths, path:=False, name:=0) {
 	ClipWait, 20, 1
 	Sleep, 4000
 
-	file := get_clip_img(path, name)
+	file := get_clip_img(paths, path, name)
 	return file
 }
 
@@ -526,57 +533,61 @@ open_regedit(registry:=""){
 }
 
 browser(paths, name, browse:="window", screen:=0, fs:=false){
-	local
-	global debug
-	path := paths[name]
+    local
+    global debug
+    path := paths[name]
 
-	If (debug="browser")
-		msgbox % path
+    If (debug="browser")
+        msgbox % path
 
-	switch browse{
-		case "window", "tab":
+    switch browse{
+        case "window", "tab":
 			name := "ahk_exe " . name . ".exe"
-		case "folder":
-			name := "ahk_class " . name
-			path := "explor " . path
-		case "group":
-			name := "ahk_group " . name
-		case "setting":
-			path := name
-			name := "ahk_exe " . name . ".exe"
-		case "site":
-			path := name
-			name :=
+		case "winname":
 
-	}
+        case "folder":
+            name := "ahk_class " . name
+            path := "explor " . path
+        case "group":
+            name := "ahk_group " . name
+        case "setting":
+            path := name
+            name := "ahk_exe " . name . ".exe"
+        case "site":
+            path := paths[name]
+            name := "ahk_exe chrome.exe" ; replace "chrome.exe" with the name of your web browser
+        case "app":
+            path := name
+    }
 
-	if WinExist(name) {
-		if WinActive(name) {
-			switch browse {
-				case "tab":
-					Send, ^{TAB}
-				default:
-					WinActivateBottom, %name%
-			}
-		}
-		else
-			WinActivate, %name%
-	}
-	else {
-		try {
-			Run %path%
-			WinWait %name%
-			WinActivate, %name%
-			WinWaitActive, %name%
-		}
-	}
-	if screen != 0
-		place_window(screen)
-	WinWaitActive, %name%
-	if fs
-		fullscreen(1)
+    if WinExist(name) {
+        if WinActive(name) {
+            switch browse {
+                case "tab":
+                    Send, ^{TAB}
+                default:
+                    WinActivateBottom, %name%
+            }
+        }
+        else
+            WinActivate, %name%
+    }
+    else {
+        try {
+			;~ msgbox, %path% | %name%
+            Run %path%
+            WinWait %name%
+            WinActivate, %name%
+            WinWaitActive, %name%
+        }
+    }
+    if screen != 0
+        place_window(screen)
+    WinWaitActive, %name%
+    if fs
+        fullscreen(1)
 
-	return
+    return
 }
 
 tooltip_img(img, rect:="dynamic", box_size:="default", fps:=50, halt:=false, coo_Ref:="screen", box_color:="44FF44") {

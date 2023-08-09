@@ -8,7 +8,7 @@ SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 enum_screens() {
 	local
 	sysget, n, MonitorCount
-	Loop, n {
+	Loop, %n%	{
 		sysget, scr, MonitorName, %A_Index%
 		msgbox the name of screen number %A_Index% is %scr%
 	}

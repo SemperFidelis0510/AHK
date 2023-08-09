@@ -15,7 +15,7 @@ global bm := []
 global ref_cache := {}
 global TTState := ""
 global Null := False
-global group_names := ["programming", "communication", "data"]
+global group_names := ["programming", "communication", "data", "video"]
 ;~ global groups := {"programming": programming, "communication": communication}
 
 global programming
@@ -31,6 +31,11 @@ GroupAdd, communication, WhatsApp
 GroupAdd, communication, ahk_exe OUTLOOK.exe
 GroupAdd, communication, ahk_exe Discord.exe
 
+global internet
+GroupAdd, internet, ahk_exe msedge.exe
+GroupAdd, internet, ahk_exe chrome.exe
+
+
 ;~ turn screen to class
 global screens := {"Xrange": [], "Yrange": [], "dim": [], "COM": []
 					,"names": ["left", "right", "right"]
@@ -42,7 +47,7 @@ get_screens_data(screens, debug)
 Switch A_ComputerName{
 	;~ Case "PHYAROM2":
 	;~ Case "ZEUS2":
-	Case "CHRONOS6":
+	Case "CHRONOS7":
 		screens["names"] := ["wacom", "main", "secondary"]
 		screens["comm"] := 1
 		SysGet, scr, MonitorPrimary

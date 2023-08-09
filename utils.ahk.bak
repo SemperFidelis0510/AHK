@@ -348,6 +348,35 @@ Input(title:="", question:="", hide:=0, width:=0, hight:="") {
 	return str
 }
 
+MClick(x, y, coord="screen") {
+	local, x0, y0
+	CoordMode, Mouse, %coord%
+	MouseGetPos, x0, y0
+	Click, %x%, %y%
+	MouseMove, %x0%, %y0%
+	return
+}
+
+make_group(name, winList, default) {
+    global
+    GroupAdd, %name%, %default%
+
+    Loop, Parse, winList, `,
+    {
+        GroupAdd, %name%, %A_LoopField%
+    }
+}
+
+group_activate(name, default) {
+    GroupActivate, %name%
+    IfWinNotActive, ahk_group %name%
+    {
+        Run, %default%
+    }
+}
+
+
+
 ;~ Stdout(output:="", sciteCheck := true){
 ;~ ;output to console	-	sciteCheck reduces Stdout/Stdin performance,so where performance is necessary disable it accordingly
 	;~ Global ___console___

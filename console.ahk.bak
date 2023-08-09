@@ -10,11 +10,16 @@ SetWorkingDir %A_ScriptDir%
 ExitOnEnd := True ;exit flag
 varnames := "x,y,z,win,a,b,c,d,w"
 
+path := "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"
 
-send, {insert}
 
-x := "asdasdsadfdsfsdfkjzs 34m34lkn  3k45n34l ktgfd"
-x := "asdsad"
+;~ WinActivate, ahk_exe ONENOTE.exe
+
+;~ msgbox % WinExist("ahk_exe ONENOTE.EXE")
+;~ #1::Ins
+
+;~ x := "asdasdsadfdsfsdfkjzs 34m34lkn  3k45n34l ktgfd"
+;~ x := "asdsad"
 
 ;~ MsgBox % strlen(x)
 ;~ inputbox, txt,, %x%,, 7*strlen(x)

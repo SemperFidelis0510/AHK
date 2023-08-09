@@ -8,6 +8,8 @@ SendMode, input
 SetCapsLockState, alwaysoff
 SetNumLockState, alwayson
 SetScrollLockState, AlwaysOff
+SetTitleMatchMode, 2
+CoordMode, Mouse, screen
 
 EnvGet, pandora, Pandora
 SetWorkingDir, %pandora%\ahk
@@ -28,6 +30,15 @@ Insert::return
 #RButton UP::context_menu("show")
 ;~ XButton2::clip_to_mouse(paths)
 #Escape::close_win()
+
+;~ ~XButton1::voice_to_chatgpt()
+
+
+;~ !q::MClick(754, 54)
+;~ !w::MClick(836, 54)
+;~ !e::MClick(1052, 54)
+;~ !r::MClick(1131, 54)
+
 
 
 ;### Script Control
@@ -64,24 +75,20 @@ XButton2::Browser_Forward
 ;~ NumLock::rainmeter()
 
 ; program browsers
-#q:: browser(paths, "Chrome", "window") ; chrome browser
+#q:: browser(paths, "internet", "group") ; chrome browser
 #w:: browser(paths, "PDFXEdit", "tab") ; PDF browser
 #e:: browser(paths, "LyX", "tab") ; LyX browser
 #f:: browser(paths, "CabinetWClass", "folder") ; folder browser
-#3:: browser(paths, "programming", "group") ; programming softwares
-;~ #a:: browser(paths, "whatsapp", "site")  ; communication programs
-#a:: browser(paths, "communication", "group", screens["comm"])  ; communication programs
-#d:: browser(paths, "Discord",, 1) ; discord
-#m:: browser(paths, "OUTLOOK",, 1)  ; mail
+#s:: browser(paths, "programming", "group") ; programming softwares
+#a:: browser(paths, "WhatsApp", "winname",, 2)  ; communication programs
+#d:: browser(paths, "Discord") ; discord
+#m:: browser(paths, "OUTLOOK",, 2)  ; mail
 #n:: browser(paths, "ONENOTE",, 2) ; onenote
 #1:: browser(paths, "cmd", "window")
 #y:: browser(paths, "youtube", "site")
-#2:: browser(paths, "chatgpt", "window")
+#`:: browser(paths, "chatgpt", "window",, 1)
 
 ; system settigns
-;~ #^F1:: browser(paths, "regedit", "setting") ; regedit
-;~ #F1::  browser(paths, "devmgmt.msc", "setting") ;device manager
-;~ #!F1:: browser(paths, "compmgmt.msc", "setting") ; computer manager
 ;~ #F2::  browser(paths, "ms-settings:apps-volume", "setting") ; sound settings
 #^F2:: browser(paths, "mmsys.cpl", "setting")
 ;~ #F3::  browser(paths, "ms-settings:appsfeatures-app", "setting")
@@ -96,7 +103,7 @@ XButton2::Browser_Forward
 #Numpad5::   place_window("max")
 #Numpad0::   place_window("unmax")
 #NumpadSub:: place_window("min")
-;~ #NumpadAdd:: place_window("unmin")
+#NumpadAdd:: place_window("unmin")
 
 ; Media control
 #Ins::      Spotify(paths, "run")
@@ -109,8 +116,11 @@ XButton2::Browser_Forward
 
 
 ; contextual
-#IfWinActive ahk_exe WhatsApp.exe
-#`::send_love_emojis()
+;~ #IfWinActive ahk_exe WhatsApp.exe
+;~ #`::send_love_emojis()
+#IfWinActive ahk_exe ChatGPT.exe
+Enter:: Send, +{Enter}
+^Enter:: Send, {Enter}
 #IfWinActive ahk_exe SciTE.exe
 F1::Help_SciTE()
 ^R::reload
@@ -118,14 +128,12 @@ F1::Help_SciTE()
 NumLock::
 	WinActivate, ahk_exe winword.exe
 	Sleep, 100
-	;~ ControlSend,, {F12}, ahk_exe winword.exe
 	Send, {F12}
 F11::
 	ControlSend,, ^{F11}, ahk_exe PDFXEdit.exe
 	if (paths.computer[1]!="ZEUS2")
 		ControlSend,, {z}, ahk_exe PDFXEdit.exe
 	return
-
 #If
 #NumLock:: browser(paths, "calc", "setting") ; calculator
 
@@ -153,8 +161,6 @@ AppsKey & WheelDown:: Volume_Down
 #5::  name_computer()
 
 #If
-
-
 
 
 

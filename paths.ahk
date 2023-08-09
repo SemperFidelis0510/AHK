@@ -45,6 +45,7 @@ loadPaths(pathObj) {
 	;other programs
 	pathObj["SciTE"] := pathObj["ProgramFiles"] . "\AutoHotkey\SciTE\SciTE.exe"
 	pathObj["Chrome"] := "chrome.exe"
+	pathObj["Edge"] := pathObj["ProgramFiles"] . "(x86)\Microsoft\Edge\Application\msedge.exe"
 	pathObj["SumatraPDF"] := pathObj["appdata"] . "\Local\SumatraPDF\SumatraPDF.exe"
 	pathObj["PDFXEdit"] := pathObj["ProgramFiles"] . "\Tracker Software\PDF Editor\PDFXEdit.exe"
 	pathObj["WhatsApp"]:= pathObj["winapps"] . "\5319275A.WhatsAppDesktop_2.2242.6.0_x64__cv1g1gvanyjgm\WhatsApp.exe"
@@ -53,11 +54,12 @@ loadPaths(pathObj) {
 	pathObj["OUTLOOK"] := pathObj["ProgramFiles"] . "\Microsoft Office\root\Office16\OUTLOOK.EXE"
 	pathObj["ONENOTE"] := pathObj["ProgramFiles"] . "\Microsoft Office\root\Office16\ONENOTE.EXE"
 	pathObj["Spotify"] := pathObj["appdata"] . "\Roaming\Spotify\Spotify.exe"
+	pathObj["ChatGPT"] := pathObj["ProgramFiles"] . "\ChatGPT\ChatGPT.exe"
 
 	;scripts
 	;~ pathObj.scripts["sync"] := pathObj["pandora"] . "\windows\sync.py"
 	pathObj.scripts["add_lyx_item"] := pathObj["pandora"] . "\lyx\add_item.py"
-	pathObj.scripts["themis"] := pathObj["pandora"] . "\windows\themis.py"
+	pathObj.scripts["themis"] := pathObj["pandora"] . "\windows - old\themis.py"
 	pathObj.scripts["plutus"] := pathObj["pandora"] . "\main\plutus\main.py"
 	pathObj.scripts["clip_img"] := pathObj["pandora"] . "\windows\clip_img.py"
 	pathObj.scripts["voiceControl"] := pathObj["pandora"] . "\main\s2t.py"

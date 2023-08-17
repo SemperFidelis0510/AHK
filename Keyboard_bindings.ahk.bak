@@ -31,7 +31,8 @@ Insert::return
 ;~ XButton2::clip_to_mouse(paths)
 #Escape::close_win()
 
-;~ ~XButton1::voice_to_chatgpt()
+;~ $XButton1::voice_to_chatgpt()
+;~ $XButton2::send, {Alt}{Shift}{b}
 
 
 ;~ !q::MClick(754, 54)
@@ -66,8 +67,8 @@ Insert::return
 
 
 ;~ UI
-XButton1::Browser_Back
-XButton2::Browser_Forward
+;~ XButton1::Browser_Back
+;~ XButton2::Browser_Forward
 
 
 ;~ #Numpad6::!Tab

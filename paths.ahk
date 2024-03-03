@@ -1,7 +1,7 @@
 ﻿#NoEnv
 SendMode Input
 EnvGet, pandora, Pandora
-SetWorkingDir % pandora . "\ahk"
+;~ SetWorkingDir % pandora . "\ahk"
 #Include utils.ahk
 
 
@@ -45,15 +45,16 @@ loadPaths(pathObj) {
 	;other programs
 	pathObj["SciTE"] := pathObj["ProgramFiles"] . "\AutoHotkey\SciTE\SciTE.exe"
 	pathObj["Chrome"] := "chrome.exe"
-	pathObj["Edge"] := pathObj["ProgramFiles"] . "(x86)\Microsoft\Edge\Application\msedge.exe"
+	pathObj["Edge"] := pathObj["ProgramFiles"] . " (x86)\Microsoft\Edge\Application\msedge.exe"
 	pathObj["SumatraPDF"] := pathObj["appdata"] . "\Local\SumatraPDF\SumatraPDF.exe"
 	pathObj["PDFXEdit"] := pathObj["ProgramFiles"] . "\Tracker Software\PDF Editor\PDFXEdit.exe"
-	pathObj["WhatsApp"]:= pathObj["winapps"] . "\5319275A.WhatsAppDesktop_2.2242.6.0_x64__cv1g1gvanyjgm\WhatsApp.exe"
+	pathObj["WhatsApp"]:= pathObj["winapps"] . "\5319275A.WhatsAppDesktop_2.2336.7.0_x64__cv1g1gvanyjgm\WhatsApp.exe"
 	pathObj["Discord"] := pathObj["appdata"] . "\Local\Discord\Update.exe --processStart Discord.exe"
 	pathObj["LyX"]  := pathObj["ProgramFiles"] . "\LyX 2.3\bin\LyX.exe"
 	pathObj["OUTLOOK"] := pathObj["ProgramFiles"] . "\Microsoft Office\root\Office16\OUTLOOK.EXE"
 	pathObj["ONENOTE"] := pathObj["ProgramFiles"] . "\Microsoft Office\root\Office16\ONENOTE.EXE"
-	pathObj["Spotify"] := pathObj["appdata"] . "\Roaming\Spotify\Spotify.exe"
+	;~ pathObj["Spotify"] := pathObj["ahk"] . "\shortcuts\Spotify.exe"
+	pathObj["Spotify"] := "Spotify.exe"
 	pathObj["ChatGPT"] := pathObj["ProgramFiles"] . "\ChatGPT\ChatGPT.exe"
 
 	;scripts
@@ -64,6 +65,11 @@ loadPaths(pathObj) {
 	pathObj.scripts["clip_img"] := pathObj["pandora"] . "\windows\clip_img.py"
 	pathObj.scripts["voiceControl"] := pathObj["pandora"] . "\main\s2t.py"
 
+	;group defaults
+	pathObj.groups_def["internet"] := pathObj["Edge"]
+	pathObj.groups_def["programming"] := pathObj["pandora"]
+	pathObj.groups_def["communication"] := pathObj["WhatsApp"]
+
 	;cache
 	pathObj.cache["explorer"] := pathObj["CabinetWClass"]
 	pathObj.cache["recitations"] := pathObj["recitations"]
@@ -72,9 +78,6 @@ loadPaths(pathObj) {
 	pathObj.cache["research"] := pathObj["research"]
 	pathObj.cache["documents"] := pathObj["mydocs"]
 	pathObj.cache["thoughts"] := pathObj["uranus"]
-
-	pathObj["programming"] := pathObj["pandora"]
-	pathObj["communication"] := pathObj["WhatsApp"]
 
 	;~ locations
 	;~ pathObj.locations["document"] := {"My documents": "mydocs", "PhD": "research"
@@ -90,7 +93,7 @@ loadPaths(pathObj) {
 	Switch A_ComputerName {
 		;~ Case "CHRONOS6":
 		Case "ZEUS2":
-			pathObj["Spotify"] := pathObj["ProgramFiles"] . 			"\WindowsApps\SpotifyAB.SpotifyMusic_1.189.862.0_x86__zpdnekdrzrea0\Spotify.exe"
+			;~ pathObj["Spotify"] := pathObj["ProgramFiles"] . 			"\WindowsApps\SpotifyAB.SpotifyMusic_1.189.862.0_x86__zpdnekdrzrea0\Spotify.exe"
 		Case "PHYAROM2":
 			pathObj["LyX"] := pathObj["ProgramFiles"] . " (x86)\LyX 2.3\bin\LyX.exe"
 			pathObj["WhatsApp"]:= pathObj["appdata"] . "\Local\WhatsApp\WhatsApp.exe"

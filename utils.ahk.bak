@@ -349,7 +349,7 @@ Input(title:="", question:="", hide:=0, width:=0, hight:="") {
 }
 
 MClick(x, y, coord="screen") {
-	local, x0, y0
+	local x0, y0
 	CoordMode, Mouse, %coord%
 	MouseGetPos, x0, y0
 	Click, %x%, %y%

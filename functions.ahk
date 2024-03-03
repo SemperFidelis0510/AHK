@@ -245,7 +245,8 @@ det_screen(Xcoo, Ycoo){
 
 get_clip_img(paths, path, name:=0) {
 	local time := A_NowUTC
-	run_cmd(paths, "themis", ["--saveclip", path, "--name", name], 2)
+	local deb := 0
+	run_cmd(paths, "themis", ["--saveclip", path, "--name", name], deb)
 	path := get_newest_file(path, time)
 	return path["file"]
 }
@@ -377,7 +378,6 @@ close_win() {
 run_cmd(paths, cmd, raw_args:=0, apperent:=0, admin:=0, work_dir:="", python:=0){
 	local key, val, x
 	local args := []
-	msgbox, 6
 	if not raw_args
 		raw_args := []
 
@@ -550,6 +550,7 @@ browser(paths, name, browse:="window", screen:=0, fs:=false){
             name := "ahk_class " . name
             path := "explor " . path
         case "group":
+			path := paths.groups_def[name]
             name := "ahk_group " . name
         case "setting":
             path := name
@@ -988,6 +989,7 @@ class PathClass {
 	sys := {}
 	scripts := {}
 	cache := {}
+	groups_def := {}
 	computer := {}
 	computers := {"CHRONOS6": 1, "ZEUS2": 2, "PHYAROM2": 3}
 	locations := {}

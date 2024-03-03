@@ -5,13 +5,15 @@ SendMode, input
 SetWorkingDir %A_ScriptDir%
 #Include utils.ahk
 ;~ #Include %A_ScriptDir%
-;~ #Include functions.ahk
+#Include functions.ahk
 ;~ DetectHiddenWindows, off
 ExitOnEnd := True ;exit flag
 varnames := "x,y,z,win,a,b,c,d,w"
 
+msgbox, % paths["edge"]
+
 path := "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"
-run % path
+run % paths["edge"]
 
 ;~ WinActivate, ahk_exe ONENOTE.exe
 

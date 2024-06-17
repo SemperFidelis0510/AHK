@@ -10,10 +10,54 @@ SetWorkingDir %A_ScriptDir%
 ExitOnEnd := True ;exit flag
 varnames := "x,y,z,win,a,b,c,d,w"
 
-msgbox, % paths["edge"]
 
-path := "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"
-run % paths["edge"]
+
+iniFile := "C:\Users\btavor\Pandora\AHK\hotstrings.ini"
+section := "general_hotstrings"
+; Read all the keys under the specified section
+IniRead, keys, %iniFile%
+
+;~ Loop, %keys%
+;~ {
+	;~ IniRead, a, MyIni.ini, Sect_1, Key_%a_Index%
+	;~ msgbox % a
+;~ }
+msgbox % keys
+
+;~ Loop, Parse, keys, `n
+;~ {
+	;~ a := StrSplit(A_LoopField, "=")
+	;~ msgbox % a[1]
+	;~ msgbox % a[2]
+;~ }
+
+;~ msgbox % keys[1]
+; If no keys are found, display an error message
+
+;~ FileRead, content, %inifile%
+;~ Loop, Parse, content, `n`r
+;~ {
+	;~ if(NOT InStr(A_LoopField, "="))
+		;~ continue
+	;~ ArrCount++
+	;~ StringSplit, data, A_LoopField, =
+	;~ key%ArrCount% := data1
+;~ }
+
+;~ Loop, %ArrCount%
+;~ {
+	;~ keyname := key%A_Index%
+	;~ IniRead, keycontent, %inifile%, %inisec%, %keyname%
+	;~ Msgbox % keycontent
+	;~ ; Do what ever here with keycontent which contains the data from the key
+;~ }
+
+
+
+;~ msgbox, % paths["edge"]
+
+;~ path := "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"
+;~ run % paths["edge"]
 
 ;~ WinActivate, ahk_exe ONENOTE.exe
 

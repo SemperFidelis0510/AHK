@@ -107,10 +107,24 @@ format_cmd(cmd) {
 	return cmd
 }
 
-render_hotstrings(list, prefix:=":*:") {
+render_hotstrings(list, prefix:=":*:", context_type="none", context="none") {
 	local key, val
+	If (context_type!="none") {
+		switch context_type {
+		Case "win", "window":
+			HotKey, IfWinActive, %context%
+		Case "general":
+			HotKey, IF, %context%
+		Default:
+			HotKey, IfWinActive, %context%
+		}
+	}
+
 	For key, val in list
 		Hotstring(prefix . key, val, "on")
+
+	If (context_type!="none")
+		HotKey, IF
 	return
 }
 
@@ -352,7 +366,7 @@ MClick(x, y, coord="screen") {
 	local x0, y0
 	CoordMode, Mouse, %coord%
 	MouseGetPos, x0, y0
-	Click, %x%, %y%
+	Send {Click %x%, %y%}
 	MouseMove, %x0%, %y0%
 	return
 }
@@ -374,6 +388,72 @@ group_activate(name, default) {
         Run, %default%
     }
 }
+
+parse_ini(ini_path, section="all") {
+	local sections, temp, keys
+	local section_list := {}
+	if (section!="all") {
+		key_val_list := {}
+		IniRead, keys, %ini_path%, %section%
+		Loop, Parse, keys, `n
+		{
+			if (ErrorLevel)
+				break  ; No more keys/values to read
+
+			temp := StrSplit(A_LoopField, "=")
+			key_val_list[temp[1]] := temp[2]
+		}
+		return key_val_list
+	}
+	else {
+		IniRead, sections, %ini_path%
+		Loop, Parse, sections, `n
+		{
+			if (ErrorLevel)
+				break
+			section_list[A_LoopField] := {}
+		}
+
+		for sect in section_list {
+			IniRead, keys, %ini_path%, %sect%
+			Loop, Parse, keys, `n
+			{
+				if (ErrorLevel)
+					break
+				temp := StrSplit(A_LoopField, "=")
+				section_list[sect][temp[1]] := temp[2]
+			}
+		}
+	}
+}
+
+
+replace_Substrings(inputString, array, delim="%")
+{
+    ; Use a regular expression to find substrings encapsulated by %
+    while (pos := RegExMatch(inputString, delim . "(.*?)" . delim, match)) {
+        ; Extract the encapsulated substring without %
+        extracted := match1
+
+        ; Replace the encapsulated substring with array value
+        if (array.HasKey(extracted)) {
+            replacement := array[extracted]
+            inputString := StrReplace(inputString, "%" extracted "%", replacement)
+        }
+        ; Move the position forward to find the next match
+        pos += StrLen(match)
+    }
+    return inputString
+}
+
+
+
+
+
+
+
+
+
 
 
 

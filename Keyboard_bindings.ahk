@@ -5,7 +5,7 @@
 #Warn
 #SingleInstance Force
 SendMode, input
-SetCapsLockState, alwaysoff
+;~ SetCapsLockState, alwaysoff
 SetNumLockState, alwayson
 SetScrollLockState, AlwaysOff
 SetTitleMatchMode, 1
@@ -14,23 +14,18 @@ CoordMode, Mouse, screen
 EnvGet, pandora, Pandora
 SetWorkingDir, %pandora%\ahk
 
-#Include functions.ahk
-If debug
-	#Include analytic.ahk
-
-If AsAdmin and not A_IsAdmin
-	Run, *RunAs autohotkey.exe "%A_ScriptFullPath%" /restart
-
-;~ Run watchdog.ahk
+#Include init.ahk
 
 
 ;### General
-render_hotstrings(HS)
 Insert::return
 #RButton UP::context_menu("show")
 ;~ XButton2::clip_to_mouse(paths)
 #Escape::close_win()
 
+
+
+$XButton2::SearchWeb(,,1)
 ;~ $XButton1::voice_to_chatgpt()
 ;~ $XButton2::send, {Alt}{Shift}{b}
 
@@ -70,8 +65,7 @@ Insert::return
 
 ; program browsers
 #q:: browser(paths, "internet", "group") ; internet browsers ~ fix path
-#w:: browser(paths, "PDFXEdit", "tab") ; PDF browser
-#e:: browser(paths, "LyX", "tab") ; LyX browser
+
 #f:: browser(paths, "CabinetWClass", "folder") ; folder browser ~ fix path
 #s:: browser(paths, "programming", "group") ; programming softwares
 #a:: browser(paths, "WhatsApp", "winname",, 2)  ; communication programs ~ fix path
@@ -81,7 +75,19 @@ Insert::return
 #1:: browser(paths, "cmd", "window")
 #y:: browser(paths, "youtube", "site")
 #`:: browser(paths, "chatgpt", "window",, 1)
-*CapsLock:: Run, *RunAs cmd
+;~ *CapsLock:: Run, *RunAs cmd
+#NumLock:: browser(paths, "calc", "setting") ; calculator
+
+
+#If (A_ComputerName="HEPHAESTUS")
+	#e:: browser(paths, "vncviewer") ; vncviewer
+	#w:: browser(paths, "ms-teams")
+	#t:: browser(paths, "PDFXEdit", "tab") ; PDF browser
+#IF (A_ComputerName != "HEPHAESTUS")
+	#e:: browser(paths, "LyX", "tab") ; LyX browser
+	#w:: browser(paths, "PDFXEdit", "tab") ; PDF browser
+#IF
+
 
 ; system settigns
 #F2::  browser(paths, "ms-settings:apps-volume", "setting") ; sound settings
@@ -131,7 +137,8 @@ F11::
 		ControlSend,, {z}, ahk_exe PDFXEdit.exe
 	return
 #If
-#NumLock:: browser(paths, "calc", "setting") ; calculator
+
+
 
 
 #If (paths.computer[1] != "CHRONOS6")
@@ -143,10 +150,12 @@ AppsKey & PgUp::      Volume_Up
 AppsKey & PgDn::      Volume_Down
 AppsKey & WheelUp::   Volume_Up
 AppsKey & WheelDown:: Volume_Down
+#IF
 
-#If (DetectLang()="HE")
+#IF (DetectLang()="HE")
 ~+::   SetCapsLockState, on
 ~+ UP::SetCapsLockState, AlwaysOff
+#IF
 
 #If debug
 #1::  get_pressed_key()
@@ -155,8 +164,8 @@ AppsKey & WheelDown:: Volume_Down
 #3::  enum_screens()
 #4::  get_mouse_pos()
 #5::  name_computer()
+#IF
 
-#If
 
 
 

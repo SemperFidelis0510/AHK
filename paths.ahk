@@ -53,7 +53,9 @@ loadPaths(pathObj) {
 	pathObj["LyX"]  := pathObj["ProgramFiles"] . "\LyX 2.3\bin\LyX.exe"
 	pathObj["OUTLOOK"] := pathObj["ProgramFiles"] . "\Microsoft Office\root\Office16\OUTLOOK.EXE"
 	pathObj["ONENOTE"] := pathObj["ProgramFiles"] . "\Microsoft Office\root\Office16\ONENOTE.EXE"
+	pathObj["ms-teams"] := pathObj["winapps"] . "\MSTeams_24074.2321.2810.3500_x64__8wekyb3d8bbwe"
 	;~ pathObj["Spotify"] := pathObj["ahk"] . "\shortcuts\Spotify.exe"
+	pathObj["vncviewer"] := pathObj["ProgramFiles"] . "\RealVNC\VNC Viewer\vncviewer.exe"
 	pathObj["Spotify"] := "Spotify.exe"
 	pathObj["ChatGPT"] := pathObj["ProgramFiles"] . "\ChatGPT\ChatGPT.exe"
 

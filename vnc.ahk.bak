@@ -1,0 +1,8 @@
+﻿#NoEnv
+#Warn
+
+#IfWinActive ahk_exe vncviewer.exe
+
+
+
+#IF

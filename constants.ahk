@@ -16,7 +16,9 @@ global ref_cache := {}
 global TTState := ""
 global Null := False
 global group_names := ["programming", "communication", "data", "video"]
+global comp_names := ["CHRONOS7", "ZEUS2", "HEPHAESTUS", "PHYAROM2"]
 ;~ global groups := {"programming": programming, "communication": communication}
+global HS := {}
 
 global programming
 GroupAdd, programming, ahk_exe SciTE.exe
@@ -47,12 +49,14 @@ get_screens_data(screens, debug)
 Switch A_ComputerName{
 	;~ Case "PHYAROM2":
 	;~ Case "ZEUS2":
+	Case "HEPHAESTUS":
+		screens["order"] := ["\\.\DISPLAY3", "\\.\DISPLAY2", "\\.\DISPLAY1"]
 	Case "CHRONOS7":
 		screens["names"] := ["wacom", "main", "secondary"]
 		screens["comm"] := 1
 		SysGet, scr, MonitorPrimary
 		sysget, scr, MonitorName, scr
-		If (scr="\\.\DISPLAY9")
+		If scr in \\.\DISPLAY9,\\.\DISPLAY1,\\.\DISPLAY8
 			screens["order"] := ["\\.\DISPLAY9", "\\.\DISPLAY1", "\\.\DISPLAY8"]
 		Else
 			screens["order"] := ["\\.\DISPLAY5", "\\.\DISPLAY1", "\\.\DISPLAY4"]
@@ -60,18 +64,20 @@ Switch A_ComputerName{
 scr :=
 
 
-global HS := {}
-HS["mgmail"] := "mtavor556@gmail.com"
-HS["mtech"] := "btavor@campus.technion.ac.il"
-HS["zipcode"] := "3670041"
-HS["lastcc"] := "520197"
-HS["myid"] := "204882203"
-HS["lizid"] := "206151219"
-HS["myphone"] := "0526603463"
-HS["lizphone"] := "0526512327"
+
+;~ HS["mgmail"] := "mtavor556@gmail.com"
+;~ HS["mtech"] := "btavor@campus.technion.ac.il"
+;~ HS["zipcode"] := "3670041"
+;~ HS["lastcc"] := "520197"
+;~ HS["myid"] := "204882203"
+;~ HS["lizid"] := "206151219"
+;~ HS["myphone"] := "0526603463"
+;~ HS["lizphone"] := "0526512327"
+
 
 global SearchEngines := {}
 SearchEngines["google"] := "http://www.google.com/search?q="
+SearchEngines["bing"] := "https://www.bing.com/search?q="
 SearchEngines["books"] := "https://libgen.li/index.php?req="
 SearchEngines["translateEn>He"] := "https://translate.google.com/?sl=en&tl=iw&op=translate&text="
 SearchEngines["translateHe>En"] := "https://translate.google.com/?sl=iw&tl=en&op=translate&text="

@@ -424,19 +424,18 @@ parse_ini(ini_path, section="all") {
 				section_list[sect][temp[1]] := temp[2]
 			}
 		}
+		return section_list
 	}
 }
 
-
-replace_Substrings(inputString, array, delim="%")
-{
+replace_Substrings(inputString, array, delim="%") {
     ; Use a regular expression to find substrings encapsulated by %
-    while (pos := RegExMatch(inputString, delim . "(.*?)" . delim, match)) {
+    if (pos := RegExMatch(inputString, delim . "(.*?)" . delim, match)) {
         ; Extract the encapsulated substring without %
         extracted := match1
 
         ; Replace the encapsulated substring with array value
-        if (array.HasKey(extracted)) {
+        if (array[extracted]) {
             replacement := array[extracted]
             inputString := StrReplace(inputString, "%" extracted "%", replacement)
         }
@@ -446,6 +445,16 @@ replace_Substrings(inputString, array, delim="%")
     return inputString
 }
 
+check_file_type(filePath) {
+    ; Extract the file extension
+    SplitPath, filePath, , , fileExt
+
+    ; Convert file extension to lower case
+    fileExt := RegExReplace(fileExt, "\..*")
+
+    ; Return the file extension
+    return fileExt
+}
 
 
 

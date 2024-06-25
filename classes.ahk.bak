@@ -48,7 +48,7 @@ class PathClass {
 	load(ini_file:=0) {
 		local
 		if not ini_file
-			ini_file := this["pandora"] . "\ahk\memory\paths.ini"
+			ini_file := this["onedrive"] . "\Pandora\ahk\memory\paths.ini"
 
 		IniRead, sections, %ini_file%
 		For Each, section in sections {

@@ -11,9 +11,13 @@ If AsAdmin and not A_IsAdmin
 	Run, *RunAs autohotkey.exe "%A_ScriptFullPath%" /restart
 
 global paths := new PathClass
-paths := LoadPaths(paths)
+paths.load()
+
 generateMenus()
-LoadHotstrings()
+
+iniFile := paths["ahk"] . "\hotstrings.ini"
+
+HS := LoadHotstrings(iniFile)
 render_hotstrings(HS)
 
 ;~ Run watchdog.ahk

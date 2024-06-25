@@ -108,11 +108,19 @@ class display {
 }
 ;~ add text to rainmeter
 
-LoadHotstrings() {
-	iniFile := "C:\Users\btavor\Pandora\AHK\hotstrings.ini"
-	section := "general_hotstrings"
-	global HS := parse_ini(iniFile, section)
-	return
+LoadHotstrings(file) {
+	local type, hotstrings
+	type := check_file_type(file)
+
+	switch type
+	{
+		case "ini":
+			section := "general_hotstrings"
+			hotstrings := parse_ini(file, section)
+		;~ case "json":
+
+	}
+	return hotstrings
 }
 
 
@@ -379,7 +387,7 @@ close_win() {
 	return
 }
 
-run_cmd(paths, cmd, raw_args:=0, apperent:=0, admin:=0, work_dir:="", python:=0){
+run_cmd(paths, cmd, raw_args:=0, apperent:=0, admin:=0, work_dir:="", script:=0) {
 	local key, val, x
 	local args := []
 	if not raw_args
@@ -387,7 +395,7 @@ run_cmd(paths, cmd, raw_args:=0, apperent:=0, admin:=0, work_dir:="", python:=0)
 
 	if paths.scripts[cmd] {
 		cmd := paths.scripts[cmd]
-		python := true
+		script := true
 	}
 	else if (cmd = "")
 		InputBox, cmd, "Command", "Enter command:"
@@ -401,7 +409,7 @@ run_cmd(paths, cmd, raw_args:=0, apperent:=0, admin:=0, work_dir:="", python:=0)
 		cmd := join(,cmd, args*)
 	}
 
-	if python {
+	if script {
 		if ((apperent > 0) and not debug)
 			cmd := "python " . cmd
 		else
@@ -502,8 +510,9 @@ place_window(state:=1, Win:="A") {
 	return
 }
 
-SearchWeb(text:="", site:="google", fromClip:=0){
+SearchWeb(text:="", site:="google", fromClip:=0, by_context:=1) {
 ; possible sites are: "google", "books", "translate", "wikipedia", "arxiv", "torrent", "ahk"
+	local prefix := ""
 	if ((not text) and fromClip)
 		text := GetSelectedText()
 
@@ -511,6 +520,11 @@ SearchWeb(text:="", site:="google", fromClip:=0){
 		text := Input(title:="Search Query", question:="What whould you like to search?")
 	if not text
 		return
+
+	if by_context {
+		if WinActive("ahk_exe SciTE.exe")
+			prefix := "ahk "
+	}
 
 
 	If (site="translate") {
@@ -520,7 +534,7 @@ SearchWeb(text:="", site:="google", fromClip:=0){
 			site .= "He>En"
 	}
 
-	query := SearchEngines[site] . EncodeDecodeURI(text)
+	query := SearchEngines[site] . EncodeDecodeURI(prefix . text)
 
 	if (site="ahk")
 		query .= ".htm"
@@ -541,6 +555,7 @@ browser(paths, name, browse:="window", screen:=0, fs:=false){
     local
     global debug
     path := paths[name]
+	;~ msgbox % path
 
     If (debug="browser")
         msgbox % path
@@ -906,10 +921,11 @@ class PathClass {
 		EnvGet, OneDrive, OneDrive
 		EnvGet, ProgramData, ProgramData
 		EnvGet, UserDir, USERPROFILE
+		EnvGet, pandora, Pandora
 
 		this.computer := {A_ComputerName: this.computers[A_ComputerName]}
 		this.locations := {"document": {}, "picture": {}, "program": {}, "archive": {}}
-		this.sys := {"appdata": APPDATA, "onedrive": ONEDRIVE, "programData": programData, "user": UserDir, "ProgramFiles": ProgramFiles}
+		this.sys := {"appdata": APPDATA, "onedrive": ONEDRIVE, "programData": programData, "user": UserDir, "ProgramFiles": ProgramFiles, "pandora": Pandora}
 	}
 
 	__Get(path) {
@@ -933,20 +949,46 @@ class PathClass {
 		this.PL[name] := this.PL[intPath] . newPath
 	}
 
-	load(ini_file:=0) {
+	load(ini_path:="") {
 		local
-		if not ini_file
-			ini_file := this["onedrive"] . "\Pandora\ahk\memory\paths.ini"
+		global comp_names
+		if not ini_path
+			ini_path := A_ScriptDir . "\memory\paths.ini"
 
-		IniRead, sections, %ini_file%
-		For Each, section in sections {
-			IniRead, dict, %ini_file%
-			For key, val in dict {
-				this[section][key] := val
+		this.PL["pathList"] := ini_path
+
+		parsed_ini := parse_ini(ini_path)
+		sections := ["paths", "scripts", "groups_def", "chache", "ZEUS2"]
+		for i, sect_name in sections
+		{
+			sect := parsed_ini[sect_name]
+			for key, val in sect
+			{
+				if (InStr(val, "%")) {
+					val := replace_Substrings(val, this)
+					;~ msgbox % "|" . val
+				}
+				switch sect_name
+				{
+					Case "scripts":
+						this.scripts[key] := val
+					Case "group_def":
+						this.group_def[key] := val
+					Case "cache":
+						this.cache[key] := val
+					Case "locations":
+						this.locations[key] := val
+					Default:
+						if sect in comp_names
+						{
+							if (sect=A_ComputerName)
+								this.PL[key] := val
+						}
+						else
+							this.PL[key] := val
+				}
 			}
 		}
-		this.PL["pathList"] := ini_file
-		return
 	}
 
 	save(path:=False) {
@@ -1027,40 +1069,7 @@ class PathClass {
 			return pth
 	}
 
-	extractINI(ini_path) {
-		local
-		global comp_names
-		path_ini := parse_ini(ini_path)
-		for sect in path_ini
-		{
-			for key, val in sect
-			{
-				if (InStr(val, "%"))
-					val := replace_Substrings(val, this.PL)
 
-				switch sect
-				{
-					Case "scripts":
-						this.scripts[key] := val
-					Case "group_def":
-						this.group_def[key] := val
-					Case "cache":
-						this.cache[key] := val
-					Case "locations":
-						this.locations[key] := val
-					Default:
-						if sect in comp_names
-						{
-							if (sect=A_ComputerName)
-								this.PL[key] := val
-						}
-						else
-							this.PL[key] := val
-				}
-			}
-		}
-		return pth
-	}
 }
 
 class FileClass {

@@ -4,8 +4,9 @@
 #NoEnv
 #Warn
 #SingleInstance Force
+
 SendMode, input
-;~ SetCapsLockState, alwaysoff
+SetCapsLockState, alwaysoff
 SetNumLockState, alwayson
 SetScrollLockState, AlwaysOff
 SetTitleMatchMode, 1
@@ -23,9 +24,11 @@ Insert::return
 ;~ XButton2::clip_to_mouse(paths)
 #Escape::close_win()
 
-
+WheelRight::+^Tab
+WheelLeft::^Tab
 
 $XButton2::SearchWeb(,,1)
+$XButton1::#^+s
 ;~ $XButton1::voice_to_chatgpt()
 ;~ $XButton2::send, {Alt}{Shift}{b}
 
@@ -65,25 +68,26 @@ $XButton2::SearchWeb(,,1)
 
 ; program browsers
 #q:: browser(paths, "internet", "group") ; internet browsers ~ fix path
-#w:: browser(paths, "PDFXEdit", "tab") ; PDF browser
 #f:: browser(paths, "CabinetWClass", "folder") ; folder browser ~ fix path
 #s:: browser(paths, "programming", "group") ; programming softwares
 #a:: browser(paths, "WhatsApp", "winname",, 2)  ; communication programs ~ fix path
 #d:: browser(paths, "Discord") ; discord
 #m:: browser(paths, "OUTLOOK")  ; mail ~ fix window
 #n:: browser(paths, "ONENOTE",, 2) ; onenote
-#t:: browser(paths, "ms-teams") ; onenote
 #1:: browser(paths, "cmd", "window")
 #y:: browser(paths, "youtube", "site")
 #`:: browser(paths, "chatgpt", "window",, 1)
-;~ *CapsLock:: Run, *RunAs cmd
+*CapsLock:: Run, *RunAs cmd
 #NumLock:: browser(paths, "calc", "setting") ; calculator
 
 
 #If (A_ComputerName="HEPHAESTUS")
-	#e:: browser(paths, "vncviewer") ; vncviewer
+	#w:: browser(paths, "vncviewer") ; vncviewer
+	#e:: browser(paths, "ms-teams")
+	#t:: browser(paths, "PDFXEdit", "tab") ; PDF browser
 #IF (A_ComputerName != "HEPHAESTUS")
 	#e:: browser(paths, "LyX", "tab") ; LyX browser
+	#w:: browser(paths, "PDFXEdit", "tab") ; PDF browser
 #IF
 
 

@@ -27,6 +27,7 @@ GroupAdd, programming, ahk_exe Mathematica.exe
 GroupAdd, programming, ahk_exe hh.exe
 GroupAdd, programming, ahk_exe EXCEL.EXE
 GroupAdd, programming, ahk_exe notepad++.exe
+GroupAdd, programming, ahk_exe notepad.exe
 
 global communication
 GroupAdd, communication, WhatsApp
@@ -50,7 +51,7 @@ Switch A_ComputerName{
 	;~ Case "PHYAROM2":
 	;~ Case "ZEUS2":
 	Case "HEPHAESTUS":
-		screens["order"] := ["\\.\DISPLAY3", "\\.\DISPLAY1", "\\.\DISPLAY2"]
+		screens["order"] := ["\\.\DISPLAY3", "\\.\DISPLAY2", "\\.\DISPLAY1"]
 	Case "CHRONOS7":
 		screens["names"] := ["wacom", "main", "secondary"]
 		screens["comm"] := 1

@@ -4,7 +4,7 @@ SetWorkingDir %A_ScriptDir%
 #Include utils.ahk
 
 global debug := 0
-global AsAdmin := 0
+global AsAdmin := 1
 global math_activation := "3209-0499-VQYQQU"
 global watchlist := []
 global hotstrings := {}
@@ -27,6 +27,7 @@ GroupAdd, programming, ahk_exe Mathematica.exe
 GroupAdd, programming, ahk_exe hh.exe
 GroupAdd, programming, ahk_exe EXCEL.EXE
 GroupAdd, programming, ahk_exe notepad++.exe
+GroupAdd, programming, ahk_exe notepad.exe
 
 global communication
 GroupAdd, communication, WhatsApp
@@ -62,17 +63,6 @@ Switch A_ComputerName{
 			screens["order"] := ["\\.\DISPLAY5", "\\.\DISPLAY1", "\\.\DISPLAY4"]
 }
 scr :=
-
-
-
-;~ HS["mgmail"] := "mtavor556@gmail.com"
-;~ HS["mtech"] := "btavor@campus.technion.ac.il"
-;~ HS["zipcode"] := "3670041"
-;~ HS["lastcc"] := "520197"
-;~ HS["myid"] := "204882203"
-;~ HS["lizid"] := "206151219"
-;~ HS["myphone"] := "0526603463"
-;~ HS["lizphone"] := "0526512327"
 
 
 global SearchEngines := {}

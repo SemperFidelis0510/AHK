@@ -3,17 +3,25 @@
 ;~ SetWorkingDir %A_ScriptDir%
 #Include functions.ahk
 
-#If (A_ComputerName="HEPHAESTUS")
-	#INCLUDE vnc.ahk
-#If
+#Include functions.ahk
+If debug
+	#Include analytic.ahk
 
 If AsAdmin and not A_IsAdmin
 	Run, *RunAs autohotkey.exe "%A_ScriptFullPath%" /restart
 
 global paths := new PathClass
-paths := LoadPaths(paths)
+paths.load()
+
 generateMenus()
-LoadHotstrings()
+
+iniFile := paths["ahk"] . "\hotstrings.ini"
+msgbox % paths["ahk"]
+HS := LoadHotstrings(iniFile)
 render_hotstrings(HS)
 
 ;~ Run watchdog.ahk
+
+#If (A_ComputerName="HEPHAESTUS")
+	#INCLUDE vnc.ahk
+#If

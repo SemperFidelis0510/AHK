@@ -18,10 +18,13 @@ SetWorkingDir, %pandora%\ahk
 If debug
 	#Include analytic.ahk
 
+
+
 If AsAdmin and not A_IsAdmin
 	Run, *RunAs autohotkey.exe "%A_ScriptFullPath%" /restart
 
 ;~ Run watchdog.ahk
+
 
 
 ;### General
@@ -33,7 +36,7 @@ Insert::return
 
 ;~ $XButton1::voice_to_chatgpt()
 ;~ $XButton2::send, {Alt}{Shift}{b}
-
+#Include chatgpt.ahk
 
 ;### Script Control
 #Pause::Pause
@@ -81,7 +84,7 @@ Insert::return
 #1:: browser(paths, "cmd", "window")
 #y:: browser(paths, "youtube", "site")
 #`:: browser(paths, "chatgpt", "window",, 1)
-*CapsLock:: Run, *RunAs cmd
+*CapsLock:: Run % paths["cmd"]
 
 ; system settigns
 #F2::  browser(paths, "ms-settings:apps-volume", "setting") ; sound settings

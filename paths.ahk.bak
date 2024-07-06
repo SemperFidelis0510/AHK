@@ -33,7 +33,7 @@ loadPaths(pathObj) {
 	pathObj["recs"] := pathObj["onedrive"] . "\Documents\School\Tutorials"
 
 	;coding programs
-	pathObj["cmd"] := "*RunAs cmd"
+	pathObj["cmd"] := "*RunAs C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Visual Studio 2022\Visual Studio Tools\VC\x64_x86 Cross Tools Command Prompt for VS 2022.lnk"
 	pathObj["MathematicaFold"] := pathObj["ProgramFiles"] . "\Wolfram Research\Mathematica\13.0"
 	pathObj["Mathematica"] := pathObj["MathematicaFold"] . "\Mathematica.exe"
 	pathObj["windowspy"] := pathObj["ProgramFiles"] . "\AutoHotkey\windowspy.ahk"

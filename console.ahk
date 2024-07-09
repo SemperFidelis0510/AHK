@@ -10,11 +10,29 @@ SetWorkingDir %A_ScriptDir%
 ExitOnEnd := True ;exit flag
 varnames := "x,y,z,win,a,b,c,d,w"
 
-x := 1
-;~ for i in range(2) {
-for _, j in range(2, 3) {
-	msgbox % "j: " . j
+
+x := 3
+y := [1,2]
+z := y.MaxIndex()
+
+Loop % (x-z)
+{
+	y.push(y[y.Maxindex()])
 }
+
+for _, i in y
+	msgbox % i
+
+
+
+
+
+
+;~ x := 1
+;~ for i in range(2) {
+;~ for _, j in range(2, 3) {
+	;~ msgbox % "j: " . j
+;~ }
 ;~ }
 
 

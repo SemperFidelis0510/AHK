@@ -160,9 +160,12 @@ get_screens_data(scr, debug:=0){
 			}
 		}
 	}
-	;~ if (moncount<3) {
-
-	;~ }
+	if (moncount<3) {
+		Loop % (3-moncount)
+		{
+			scr["order"].push(scr["order"][scr["order"].MaxIndex()])
+		}
+	}
 	return scr
 }
 

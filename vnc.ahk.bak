@@ -6,14 +6,23 @@ store_hotstring() {
 	InputBox, key, Key Name, Please enter key name
 	if !ErrorLevel {
 		text0 := GetSelectedText()
+		msgbox % text
 		run_cmd(paths, "save_vnc_hotstring", [text0, "memory/vnc_htostrings.json", key], 2,,, 1)
 	}
 	return
 }
 
+stamp(type, name) {
+	FormatTime, CurrentDateTime,, dd/MM/yy
+	SendInput % "// " . type . " by " . name . " at " . CurrentDateTime . ": "
+	return
+}
+
+alt_tab() {
+	GetKeyState("alt")
+}
 
 #IfWinActive ahk_exe vncviewer.exe
-
 
 !Tab::Send, ^+l
 
@@ -23,5 +32,10 @@ store_hotstring() {
 ^+h::store_hotstring()
 
 ::secbr:://--------------------------------------------------------
+
+:X:comment::stamp("COMMENT", "btavor")
+:X:todo::stamp("TODO", "btavor")
+:X:question::stamp("QUESTION", "btavor")
+
 
 #IF

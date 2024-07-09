@@ -12,9 +12,17 @@ store_hotstring() {
 	return
 }
 
+stamp(type, name) {
+	FormatTime, CurrentDateTime,, dd/MM/yy
+	SendInput % "// " . type . " by " . name . " at " . CurrentDateTime . ": "
+	return
+}
+
+;~ alt_tab() {
+	;~ GetKeyState("alt", "p")
+;~ }
 
 #IfWinActive ahk_exe vncviewer.exe
-
 
 !Tab::Send, ^+l
 
@@ -24,5 +32,10 @@ store_hotstring() {
 ^+h::store_hotstring()
 
 ::secbr:://--------------------------------------------------------
+
+:X:comment::stamp("COMMENT", "btavor")
+:X:todo::stamp("TODO", "btavor")
+:X:question::stamp("QUESTION", "btavor")
+
 
 #IF

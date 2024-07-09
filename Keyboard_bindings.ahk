@@ -24,10 +24,11 @@ Insert::return
 ;~ XButton2::clip_to_mouse(paths)
 #Escape::close_win()
 
-WheelRight::+^Tab
-WheelLeft::^Tab
+;~ WheelRight::+^Tab
+;~ WheelLeft::^Tab
 
 $XButton2::SearchWeb(,,1)
+#XButton2::SearchWeb(,,1,0)
 $XButton1::#^+s
 #XButton1::#+t
 ;~ $XButton1::voice_to_chatgpt()
@@ -63,12 +64,10 @@ $XButton1::#^+s
 ;~ XButton2::Browser_Forward
 
 
-;~ #Numpad6::!Tab
-;~ #Numpad4 Up::AltTab
 ;~ NumLock::rainmeter()
 
 ; program browsers
-#q:: browser(paths, "internet", "group") ; internet browsers ~ fix path
+#q:: browser(paths, "internet", "group") ; internet browsers
 #f:: browser(paths, "CabinetWClass", "folder") ; folder browser ~ fix path
 #s:: browser(paths, "programming", "group") ; programming softwares
 #a:: browser(paths, "WhatsApp", "winname",, 2)  ; communication programs ~ fix path
@@ -76,6 +75,8 @@ $XButton1::#^+s
 #m:: browser(paths, "OUTLOOK")  ; mail ~ fix window
 #n:: browser(paths, "ONENOTE",, 2) ; onenote
 #1:: browser(paths, "cmd", "window")
+#2:: browser(paths, "documents", "group")
+#3:: browser(paths, "communication", "group")
 #y:: browser(paths, "youtube", "site")
 #`:: browser(paths, "chatgpt", "window",, 1)
 *CapsLock:: Run, *RunAs cmd

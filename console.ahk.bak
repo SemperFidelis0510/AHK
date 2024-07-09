@@ -5,24 +5,56 @@ SendMode, input
 SetWorkingDir %A_ScriptDir%
 #Include utils.ahk
 ;~ #Include %A_ScriptDir%
-#Include functions.ahk
+;~ #Include functions.ahk
 ;~ DetectHiddenWindows, off
 ExitOnEnd := True ;exit flag
 varnames := "x,y,z,win,a,b,c,d,w"
 
+x := 1
+;~ for i in range(2) {
+for _, j in range(2, 3) {
+	msgbox % "j: " . j
+}
+;~ }
 
 
-iniFile := "C:\Users\btavor\Pandora\AHK\hotstrings.ini"
-section := "general_hotstrings"
-; Read all the keys under the specified section
-IniRead, keys, %iniFile%
+;~ z := 2
+;~ x := [1]
+;~ x.push(z)
+;~ msgbox % x[1]
+;~ for i in x {
+	;~ msgbox % i
+;~ }
+;~ msgbox % x
+
+
+;~ x := 1
+;~ y := 3
+;~ z := x + y
+;~ msgbox % z
+
+;~ x := range(56)
+;~ msgbox % x
+;~ for _, i in x {
+	;~ MsgBox %i%
+;~ }
+
+
+
+
+
+
+;~ iniFile := "C:\Users\btavor\Pandora\AHK\paths.ini"
+;~ section := "general_hotstrings"
+;~ ; Read all the keys under the specified section
+;~ IniRead, keys, %iniFile%
 
 ;~ Loop, %keys%
 ;~ {
 	;~ IniRead, a, MyIni.ini, Sect_1, Key_%a_Index%
 	;~ msgbox % a
 ;~ }
-msgbox % keys
+;~ msgbox % keys
 
 ;~ Loop, Parse, keys, `n
 ;~ {

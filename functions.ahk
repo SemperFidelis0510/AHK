@@ -59,9 +59,6 @@ generateMenus() {
 	return
 }
 
-paths := new PathClass
-paths := LoadPaths(paths)
-generateMenus()
 
 
 ; ideas
@@ -110,6 +107,21 @@ class display {
 	}
 }
 ;~ add text to rainmeter
+
+LoadHotstrings(file) {
+	local type, hotstrings
+	type := check_file_type(file)
+
+	switch type
+	{
+		case "ini":
+			section := "general_hotstrings"
+			hotstrings := parse_ini(file, section)
+		;~ case "json":
+
+	}
+	return hotstrings
+}
 
 
 ;### Sensors
@@ -375,7 +387,7 @@ close_win() {
 	return
 }
 
-run_cmd(paths, cmd, raw_args:=0, apperent:=0, admin:=0, work_dir:="", python:=0){
+run_cmd(paths, cmd, raw_args:=0, apperent:=0, admin:=0, work_dir:="", script:=0) {
 	local key, val, x
 	local args := []
 	if not raw_args
@@ -383,7 +395,7 @@ run_cmd(paths, cmd, raw_args:=0, apperent:=0, admin:=0, work_dir:="", python:=0)
 
 	if paths.scripts[cmd] {
 		cmd := paths.scripts[cmd]
-		python := true
+		script := true
 	}
 	else if (cmd = "")
 		InputBox, cmd, "Command", "Enter command:"
@@ -397,7 +409,7 @@ run_cmd(paths, cmd, raw_args:=0, apperent:=0, admin:=0, work_dir:="", python:=0)
 		cmd := join(,cmd, args*)
 	}
 
-	if python {
+	if script {
 		if ((apperent > 0) and not debug)
 			cmd := "python " . cmd
 		else
@@ -498,8 +510,9 @@ place_window(state:=1, Win:="A") {
 	return
 }
 
-SearchWeb(text:="", site:="google", fromClip:=0){
+SearchWeb(text:="", site:="google", fromClip:=0, by_context:=1) {
 ; possible sites are: "google", "books", "translate", "wikipedia", "arxiv", "torrent", "ahk"
+	local prefix := ""
 	if ((not text) and fromClip)
 		text := GetSelectedText()
 
@@ -507,6 +520,11 @@ SearchWeb(text:="", site:="google", fromClip:=0){
 		text := Input(title:="Search Query", question:="What whould you like to search?")
 	if not text
 		return
+
+	if by_context {
+		if WinActive("ahk_exe SciTE.exe")
+			prefix := "ahk "
+	}
 
 
 	If (site="translate") {
@@ -516,7 +534,7 @@ SearchWeb(text:="", site:="google", fromClip:=0){
 			site .= "He>En"
 	}
 
-	query := SearchEngines[site] . EncodeDecodeURI(text)
+	query := SearchEngines[site] . EncodeDecodeURI(prefix . text)
 
 	if (site="ahk")
 		query .= ".htm"
@@ -537,6 +555,7 @@ browser(paths, name, browse:="window", screen:=0, fs:=false){
     local
     global debug
     path := paths[name]
+	;~ msgbox % path
 
     If (debug="browser")
         msgbox % path
@@ -766,105 +785,6 @@ lyx_append_uranus(file, formula, title="") {
 }
 
 
-; sumatra
-pdf_to_favorite() {
-	local win, f_ind
-	win := "ahk_id " . WinExist("ahk_exe SumatraPDF.exe")
-	f_ind := LTrim(A_ThisHotkey, "^Numpad")
-	ControlSend,, ^{g}, % win
-	ControlSendRaw,, % bm[f_ind], % win
-	ControlSend,, {enter}, % win
-
-	return
-}
-
-sumatra_annotate(txt, position) {
-	local fs, win
-	;~ if WinExist("Annotations") {
-		;~ ControlSend, Button3, {Enter}, Annotations
-	;~ }
-	if (txt = "")
-		return
-	CoordMode, Mouse, Screen
-	win := "ahk_id " . WinExist("ahk_exe SumatraPDF.exe")
-
-	x := position[1]
-	Y := position[2]
-	DllCall("SetCursorPos", "int", X , "int", Y)
-	fs := fullscreen(0, win)
-	ControlSend,, {q}, % win
-	WinWait, Annotations,, 5
-	fullscreen(fs, win)
-	ControlSend, Edit1, %txt%, Annotations
-	ControlSend, Button4, {enter}, Annotations
-	WinClose, Annotations
-	WinWaitClose, Annotations
-	WinActivate, win
-
-	return
-}
-
-sumatra_save_page() {
-	local txt, i, win
-	win := "ahk_id " . WinExist("ahk_exe SumatraPDF.exe")
-	fs := fullscreen("return", win)
-
-	if fs {
-		ControlSend,, ^{g}, % win
-		WinWait, Go to page
-		win := "ahk_id " . WinExist("Go to page")
-	}
-
-	ControlGetText, txt, Edit1, % win
-	bm.Push(txt)
-	i := bm.length()
-	Hotkey, IfWinActive, ahk_exe SumatraPDF.exe
-	Hotkey, ^Numpad%i%, pdf_to_favorite
-
-	if fs {
-		;~ msgbox % win
-		ControlSend,, {enter}, % win
-	}
-	return
-}
-
-sumatra_save_ref(index) {
-	local img, X, Y, doc
-	if not index {
-		InputBox, index, Reference Index, What is the index of the reference?
-		sleep, 500
-	}
-
-	WinGetTitle, doc, ahk_exe sumatra.exe
-	doc := make_file_name(doc)
-
-	img := capture_img("\sumatra\" . doc)
-	ref_cache[index] := LoadPicture(img)
-
-	coordmode, mouse, screen
-	MouseGetPos, X, Y
-	tooltip_img(ref_cache[index], [X-50,Y-50])
-	msgbox % ref_cache[index]
-	;~ MouseGetPos, X, Y
-	;~ tooltip_img(img, [X,Y])
-
-	return
-}
-
-sumatra_show_ref(pos) {
-	local index, X, Y
-	index := GetSelectedText()
-	if not index
-		Input, index, Reference Index, What is the index of the reference?
-
-	;~ msgbox, % ref_cache[index]
-	coordmode, mouse, screen
-	MouseGetPos, X, Y
-	;~ splashimage, % "HBITMAP:*" . ref_cache[index], b x0 y0,,, MouseImageID
-	tooltip_img(ref_cache[index], [X-50,Y-50])
-	return
-}
-
 ; rainmeter
 RM_layout(paths, name){
 	local path := paths["pandora"] . "\rainmeter\" . name
@@ -1001,10 +921,11 @@ class PathClass {
 		EnvGet, OneDrive, OneDrive
 		EnvGet, ProgramData, ProgramData
 		EnvGet, UserDir, USERPROFILE
+		EnvGet, pandora, Pandora
 
 		this.computer := {A_ComputerName: this.computers[A_ComputerName]}
 		this.locations := {"document": {}, "picture": {}, "program": {}, "archive": {}}
-		this.sys := {"appdata": APPDATA, "onedrive": ONEDRIVE, "programData": programData, "user": UserDir, "ProgramFiles": ProgramFiles}
+		this.sys := {"appdata": APPDATA, "onedrive": ONEDRIVE, "programData": programData, "user": UserDir, "ProgramFiles": ProgramFiles, "pandora": Pandora}
 	}
 
 	__Get(path) {
@@ -1028,20 +949,46 @@ class PathClass {
 		this.PL[name] := this.PL[intPath] . newPath
 	}
 
-	load(ini_file:=0) {
+	load(ini_path:="") {
 		local
-		if not ini_file
-			ini_file := this["onedrive"] . "\Pandora\ahk\memory\paths.ini"
+		global comp_names
+		if not ini_path
+			ini_path := A_ScriptDir . "\memory\paths.ini"
 
-		IniRead, sections, %ini_file%
-		For Each, section in sections {
-			IniRead, dict, %ini_file%
-			For key, val in dict {
-				this[section][key] := val
+		this.PL["pathList"] := ini_path
+
+		parsed_ini := parse_ini(ini_path)
+		sections := ["paths", "scripts", "groups_def", "chache", "ZEUS2"]
+		for i, sect_name in sections
+		{
+			sect := parsed_ini[sect_name]
+			for key, val in sect
+			{
+				if (InStr(val, "%")) {
+					val := replace_Substrings(val, this)
+					;~ msgbox % "|" . val
+				}
+				switch sect_name
+				{
+					Case "scripts":
+						this.scripts[key] := val
+					Case "group_def":
+						this.group_def[key] := val
+					Case "cache":
+						this.cache[key] := val
+					Case "locations":
+						this.locations[key] := val
+					Default:
+						if sect in comp_names
+						{
+							if (sect=A_ComputerName)
+								this.PL[key] := val
+						}
+						else
+							this.PL[key] := val
+				}
 			}
 		}
-		this.PL["pathList"] := ini_file
-		return
 	}
 
 	save(path:=False) {
@@ -1054,7 +1001,7 @@ class PathClass {
 		return
 	}
 
-	revise(path, relative_path:="", enclose:=1){
+	revise(path, relative_path:="", enclose:=1) {
 
 		If this.PL[path]
 			path := this.PL[path]
@@ -1121,6 +1068,8 @@ class PathClass {
 		else
 			return pth
 	}
+
+
 }
 
 class FileClass {

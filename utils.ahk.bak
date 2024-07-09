@@ -129,26 +129,61 @@ render_hotstrings(list, prefix:=":*:", context_type="none", context="none") {
 }
 
 get_screens_data(scr, debug:=0){
+	; TODO: auto enumerate screens based on coordinates
 	local
 	SysGet, moncount, Monitorcount
 	scr["count"] := moncount
+	scr["order"] := []
 	Loop % moncount {
 		SysGet, mon, Monitor, %A_Index%
 		sysget, monName, MonitorName, %A_Index%
 		scr["enum"][monName] := A_Index
+		scr["order"].push(A_Index)
 		if (debug="screen")
 			msgbox % "screen name: " . monName . "`nscreen index: " . A_Index . "`nscreen number: " . scr["enum"][monName]
 
 		scr["Xrange"].push([monLeft, monRight])
 		scr["Yrange"].push([monTop, monBottom])
-		;~ dimX :=
-		;~ dimY :=
+
 		scr["dim"].push([abs(monRight-monLeft), abs(monBottom-monTop)])
-		;~ COMX :=
-		;~ COMY :=
+
 		scr["COM"].push([(monRight+monLeft)/2, (monBottom+monTop)/2])
 	}
+	if (moncount>1) {
+		for _, i in range(moncount-1) {
+			for _, j in range(i+1, moncount) {
+				if (scr["Xrange"][i][1] > scr["Xrange"][j][1]) {
+					temp := scr["order"][i]
+					scr["order"][i] := scr["order"][j]
+					scr["order"][j] := temp
+				}
+			}
+		}
+	}
 	return scr
+}
+
+range(start, stop:="", delta:=1) {
+	local
+	global debug
+	if not stop {
+		stop := start
+		start := 1
+	}
+
+	range_list := []
+	range_list.push(start)
+
+	steps := (stop-start) // delta
+	Loop % steps {
+		new_val := range_list[A_Index] + delta
+		;~ if (debug >= 2) {
+			;~ msgbox % "index: " . A_Index . " | value: " . new_val
+		;~ }
+		range_list.push(new_val)
+	}
+
+	return range_list
 }
 
 Any(sentence*) {
@@ -280,11 +315,11 @@ GetSelectedText(){
 	tmp := Clipboard
 	Clipboard =
 	Send, ^c
-	ClipWait, 0.5
+	ClipWait, 1
 	if Clipboard
 		focus["clipboard"] := Clipboard
 	Clipboard := tmp
-	ClipWait, 0.5
+	ClipWait, 1
 	return focus["clipboard"]
 }
 

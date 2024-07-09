@@ -481,7 +481,8 @@ place_window(state:=1, Win:="A") {
 				msgbox % screens["enum"][screens["order"][state]]
 			}
 
-			scr := screens["enum"][screens["order"][state]]
+			;~ scr := screens["enum"][screens["order"][state]]
+			scr := screens["order"][state]
 			WinGetPos, xpos, ypos, wid, hit, ahk_id %aWin%
 			;~ msgbox % scr
 			if (scr = det_screen(xpos+(wid/2), ypos+(hit/2)))
@@ -511,8 +512,9 @@ place_window(state:=1, Win:="A") {
 }
 
 SearchWeb(text:="", site:="google", fromClip:=0, by_context:=1) {
-; possible sites are: "google", "books", "translate", "wikipedia", "arxiv", "torrent", "ahk"
+; possible sites are: "google", "books", "translate", "wikipedia", "arxiv", "torrent", "ahk", "confluence"
 	local prefix := ""
+	local raw_query := ""
 	if ((not text) and fromClip)
 		text := GetSelectedText()
 
@@ -521,9 +523,15 @@ SearchWeb(text:="", site:="google", fromClip:=0, by_context:=1) {
 	if not text
 		return
 
+
 	if by_context {
-		if WinActive("ahk_exe SciTE.exe")
+		if WinActive("ahk_exe SciTE.exe") {
 			prefix := "ahk "
+			site := "google"
+		}
+		else if WinActive("ahk_exe vncviewer.exe") {
+			site := "confluence"
+		}
 	}
 
 
@@ -534,7 +542,14 @@ SearchWeb(text:="", site:="google", fromClip:=0, by_context:=1) {
 			site .= "He>En"
 	}
 
-	query := SearchEngines[site] . EncodeDecodeURI(prefix . text)
+	switch site
+	{
+		case "confluence":
+			raw_query := """" . text . """&queryString=" . text
+		default:
+			raw_query := prefix . text
+	}
+	query := SearchEngines[site] . EncodeDecodeURI(raw_query)
 
 	if (site="ahk")
 		query .= ".htm"
@@ -554,13 +569,15 @@ open_regedit(registry:=""){
 browser(paths, name, browse:="window", screen:=0, fs:=false){
     local
     global debug
-    path := paths[name]
-	;~ msgbox % path
+	If (debug=="browser")
+        msgbox % "browsing program: " . name
 
-    If (debug="browser")
-        msgbox % path
+	if paths[name]
+		path := paths[name]
+	else
+		msgbox, Error: No such path
 
-    switch browse{
+    switch browse {
         case "window", "tab":
 			name := "ahk_exe " . name . ".exe"
 		case "winname":
@@ -576,10 +593,13 @@ browser(paths, name, browse:="window", screen:=0, fs:=false){
             name := "ahk_exe " . name . ".exe"
         case "site":
             path := paths[name]
-            name := "ahk_exe chrome.exe" ; replace "chrome.exe" with the name of your web browser
+            name := "ahk_exe edge.exe"
         case "app":
             path := name
     }
+
+	If (debug=="browser")
+        msgbox % "path to browser: " . path
 
     if WinExist(name) {
         if WinActive(name) {
@@ -595,7 +615,8 @@ browser(paths, name, browse:="window", screen:=0, fs:=false){
     }
     else {
         try {
-			;~ msgbox, %path% | %name%
+			if (debug=="browser")
+				msgbox % "tyring to open path: " . path . " | for program named: " . name
             Run %path%
             WinWait %name%
             WinActivate, %name%
@@ -911,7 +932,7 @@ class PathClass {
 	cache := {}
 	groups_def := {}
 	computer := {}
-	computers := {"CHRONOS6": 1, "ZEUS2": 2, "PHYAROM2": 3}
+	computers := {"CHRONOS6": 1, "ZEUS2": 2, "PHYAROM2": 3, "HEPAESTUS": 4}
 	locations := {}
 
 	__New() {
@@ -929,14 +950,39 @@ class PathClass {
 	}
 
 	__Get(path) {
-		if this.sys[path]
+		if (debug=="pathobj_call") {
+			msgbox % "asked for path: " . path
+		}
+		if this.sys[path] {
+			if (debug=="pathobj_call")
+				msgbox % "got path: " . this.sys[path]
 			return this.sys[path]
-		else if this.PL[path]
+		}
+		else if this.PL[path] {
+			if (debug=="pathobj_call")
+				msgbox % "got path: " . this.PL[path]
 			return this.PL[path]
-		else if this.scripts[path]
+		}
+		else if this.scripts[path] {
+			if (debug=="pathobj_call")
+				msgbox % "got path: " . this.scripts[path]
 			return this.scripts[path]
-		else if (path="comp") or (path="computer")
+		}
+		else if this.groups_def[path] {
+			if (debug=="pathobj_call")
+				msgbox % "got path: " . this.groups_def[path]
+			return this.groups_def[path]
+		}
+		else if this.cache[path] {
+			if (debug=="pathobj_call")
+				msgbox % "got path: " . this.cache[path]
+			return this.cache[path]
+		}
+		else if (path="comp") or (path="computer") {
+			if (debug=="pathobj_call")
+				msgbox % "got path: " . this.computer
 			return this.computer
+		}
 	}
 
 	__Set(field, pair) {
@@ -951,7 +997,7 @@ class PathClass {
 
 	load(ini_path:="") {
 		local
-		global comp_names
+		global comp_names, debug
 		if not ini_path
 			ini_path := A_ScriptDir . "\memory\paths.ini"
 
@@ -966,14 +1012,19 @@ class PathClass {
 			{
 				if (InStr(val, "%")) {
 					val := replace_Substrings(val, this)
-					;~ msgbox % "|" . val
 				}
+
+				;~ if (debug=="pathobj")
+						;~ msgbox % "section: " . sect . " | key: " . key . " | val: " . val
+
 				switch sect_name
 				{
 					Case "scripts":
 						this.scripts[key] := val
-					Case "group_def":
-						this.group_def[key] := val
+					Case "groups_def":
+						if (debug=="pathobj")
+							msgbox % "section: " . sect . " | key: " . key . " | val: " . val
+						this.groups_def[key] := val
 					Case "cache":
 						this.cache[key] := val
 					Case "locations":
@@ -1002,7 +1053,6 @@ class PathClass {
 	}
 
 	revise(path, relative_path:="", enclose:=1) {
-
 		If this.PL[path]
 			path := this.PL[path]
 
@@ -1347,7 +1397,11 @@ class ControlPoint {
 	}
 }
 
-
+class Debuger {
+	state := 0
+	__New {
+	}
+}
 
 ;### Context Menu
 

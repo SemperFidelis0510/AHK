@@ -13,10 +13,9 @@ If AsAdmin and not A_IsAdmin
 global paths := new PathClass
 paths.load()
 
-generateMenus()
+;~ generateMenus()
 
 iniFile := paths["ahk"] . "\hotstrings.ini"
-msgbox % paths["ahk"]
 HS := LoadHotstrings(iniFile)
 render_hotstrings(HS)
 

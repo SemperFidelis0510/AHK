@@ -10,13 +10,14 @@ If debug
 If AsAdmin and not A_IsAdmin
 	Run, *RunAs autohotkey.exe "%A_ScriptFullPath%" /restart
 
+get_screens_data(screens, debug)
+
 global paths := new PathClass
 paths.load()
 
-generateMenus()
+;~ generateMenus()
 
 iniFile := paths["ahk"] . "\hotstrings.ini"
-
 HS := LoadHotstrings(iniFile)
 render_hotstrings(HS)
 

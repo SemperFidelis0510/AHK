@@ -144,7 +144,6 @@ F11::
 
 
 
-
 #If (paths.computer[1] != "CHRONOS6")
 AppsKey & Insert::    Media_Play_Pause
 AppsKey & Delete::    Media_Stop

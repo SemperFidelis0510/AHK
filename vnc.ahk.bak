@@ -18,9 +18,9 @@ stamp(type, name) {
 	return
 }
 
-alt_tab() {
-	GetKeyState("alt")
-}
+;~ alt_tab() {
+	;~ GetKeyState("alt", "p")
+;~ }
 
 #IfWinActive ahk_exe vncviewer.exe
 
@@ -31,11 +31,13 @@ alt_tab() {
 
 ^+h::store_hotstring()
 
-::secbr:://--------------------------------------------------------
+;~ ::secbr:://--------------------------------------------------------
 
-:X:comment::stamp("COMMENT", "btavor")
-:X:todo::stamp("TODO", "btavor")
-:X:question::stamp("QUESTION", "btavor")
+;~ :X:comment::stamp("COMMENT", "btavor")
+;~ :X:todo::stamp("TODO", "btavor")
+;~ :X:question::stamp("QUESTION", "btavor")
+
+::fog_flag::-inc_comp 0
 
 
 #IF

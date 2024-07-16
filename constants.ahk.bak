@@ -5,6 +5,7 @@ SetWorkingDir %A_ScriptDir%
 
 global debug := 0 ; 0, 1, 2, browser, cmd, pathobj, pathobj_call, screen
 global AsAdmin := 1
+global work_mode := 1
 global math_activation := "3209-0499-VQYQQU"
 global watchlist := []
 global hotstrings := {}
@@ -15,41 +16,54 @@ global bm := []
 global ref_cache := {}
 global TTState := ""
 global Null := False
-global group_names := ["programming", "communication", "data", "video"]
+global group_names := ["programming", "communication", "documents", "internet"]
 global comp_names := ["CHRONOS7", "ZEUS2", "HEPHAESTUS", "PHYAROM2"]
 ;~ global groups := {"programming": programming, "communication": communication}
 global HS := {}
-
-if (debug!=0)
-	AsAdmin := 0
+global control_groups := {"programming": ["SciTE.exe", "pycharm64.exe", "Mathematica.exe", "hh.exe", "EXCEL.exe", "notepad++.exe", "notepad.exe"]
+						, "communication": ["WhatsApp", "OUTLOOK.exe", "Discord.exe", "ms-teams.exe"]
+						, "documents": ["notepad.exe", "EXCEL.exe", "WINWORD.exe", "PDFXEdit_NoPrintIsolation.exe", "AcroRd32.exe", "ONENOTE.exe"]
+						, "internet": ["msedge.exe", "chrome.exe"]}
 
 
 global programming
-GroupAdd, programming, ahk_exe SciTE.exe
-GroupAdd, programming, ahk_exe pycharm64.exe
-GroupAdd, programming, ahk_exe Mathematica.exe
-GroupAdd, programming, ahk_exe hh.exe
-GroupAdd, programming, ahk_exe EXCEL.EXE
-GroupAdd, programming, ahk_exe notepad++.exe
-GroupAdd, programming, ahk_exe notepad.exe
-
 global communication
-GroupAdd, communication, WhatsApp
-GroupAdd, communication, ahk_exe OUTLOOK.exe
-GroupAdd, communication, ahk_exe Discord.exe
-GroupAdd, communication, ahk_exe ms-teams.exe
-
 global documents
-GroupAdd, documents, ahk_exe notepad.exe
-GroupAdd, documents, ahk_exe EXCEL.exe
-GroupAdd, documents, ahk_exe WINWORD.exe
-GroupAdd, documents, ahk_exe PDFXEdit_NoPrintIsolation.exe
-GroupAdd, documents, ahk_exe AcroRd32.exe
-GroupAdd, documents, ahk_exe ONENOTE.exe
-
 global internet
-GroupAdd, internet, ahk_exe msedge.exe
-GroupAdd, internet, ahk_exe chrome.exe
+;~ for group, g_list in control_groups {
+	;~ for _, program in g_list {
+		;~ if InStr(program, "exe")
+			;~ GroupAdd, %group%, ahk_exe %program%
+		;~ else
+			;~ GroupAdd, %group%, %program%
+	;~ }
+;~ }
+
+
+;~ GroupAdd, programming, ahk_exe SciTE.exe
+;~ GroupAdd, programming, ahk_exe pycharm64.exe
+;~ GroupAdd, programming, ahk_exe Mathematica.exe
+;~ GroupAdd, programming, ahk_exe hh.exe
+;~ GroupAdd, programming, ahk_exe EXCEL.EXE
+;~ GroupAdd, programming, ahk_exe notepad++.exe
+;~ GroupAdd, programming, ahk_exe notepad.exe
+
+;~ GroupAdd, communication, WhatsApp
+;~ GroupAdd, communication, ahk_exe OUTLOOK.exe
+;~ GroupAdd, communication, ahk_exe Discord.exe
+;~ GroupAdd, communication, ahk_exe ms-teams.exe
+
+
+;~ GroupAdd, documents, ahk_exe notepad.exe
+;~ GroupAdd, documents, ahk_exe EXCEL.exe
+;~ GroupAdd, documents, ahk_exe WINWORD.exe
+;~ GroupAdd, documents, ahk_exe PDFXEdit_NoPrintIsolation.exe
+;~ GroupAdd, documents, ahk_exe AcroRd32.exe
+;~ GroupAdd, documents, ahk_exe ONENOTE.exe
+
+
+;~ GroupAdd, internet, ahk_exe msedge.exe
+;~ GroupAdd, internet, ahk_exe chrome.exe
 
 
 ;~ turn screen to class

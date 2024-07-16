@@ -31,11 +31,13 @@ stamp(type, name) {
 
 ^+h::store_hotstring()
 
-::secbr:://--------------------------------------------------------
+;~ ::secbr:://--------------------------------------------------------
 
-:X:comment::stamp("COMMENT", "btavor")
-:X:todo::stamp("TODO", "btavor")
-:X:question::stamp("QUESTION", "btavor")
+;~ :X:comment::stamp("COMMENT", "btavor")
+;~ :X:todo::stamp("TODO", "btavor")
+;~ :X:question::stamp("QUESTION", "btavor")
+
+::fog_flag::-inc_comp 0
 
 
 #IF

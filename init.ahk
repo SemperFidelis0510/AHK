@@ -1,14 +1,35 @@
 ﻿#NoEnv
 #Warn
-;~ SetWorkingDir %A_ScriptDir%
+
+SendMode, input
+SetCapsLockState, alwaysoff
+SetNumLockState, alwayson
+SetScrollLockState, AlwaysOff
+SetTitleMatchMode, 1
+CoordMode, Mouse, screen
+
+EnvGet, pandora, Pandora
+SetWorkingDir, %pandora%\ahk
+
+#Include constants.ahk
 #Include functions.ahk
 
-#Include functions.ahk
-If debug
-	#Include analytic.ahk
+if (debug!=0)
+	AsAdmin := 0
+if (A_ComputerName="HEPHAESTUS")
+	work_mode := 1
 
 If AsAdmin and not A_IsAdmin
 	Run, *RunAs autohotkey.exe "%A_ScriptFullPath%" /restart
+
+for group, g_list in control_groups {
+	for _, program in g_list {
+		if InStr(program, "exe")
+			GroupAdd, %group%, ahk_exe %program%
+		else
+			GroupAdd, %group%, %program%
+	}
+}
 
 get_screens_data(screens, debug)
 
@@ -23,6 +44,5 @@ render_hotstrings(HS)
 
 ;~ Run watchdog.ahk
 
-#If (A_ComputerName="HEPHAESTUS")
-	#INCLUDE vnc.ahk
-#If
+#If (work_mode!=0)
+	#Include vnc.ahk

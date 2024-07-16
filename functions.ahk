@@ -2,8 +2,8 @@
 SendMode, input
 SetWorkingDir %A_ScriptDir%
 #include constants.ahk
-#Include paths.ahk
 #include utils.ahk
+#Include analytic.ahk
 #Include gui_menus.ahk
 
 ; ### Init
@@ -1399,10 +1399,28 @@ class ControlPoint {
 
 class Debuger {
 	state := 0
-	__New {
+	__New() {
 	}
 }
 
+class Schedule {
+	schedule_table := {"sunday": [], "monday": [], "tuesday": [], "wednesday": [], "thursday": [], "friday": [], "saturday": []}
+	weekend := ["friday", "saturday"]
+	active_dates := []
+	__New(table){
+		this.schedule_table := table
+		}
+
+	save() {
+	}
+
+	;~ check_active() {
+		;~ local
+		;~ FormatTime, CurrentDayTime,, dddd/HH/mm
+		;~ time_array := StrSplit(CurrentDayTime , "/")
+		;~ proper_time := 60*Integer(time_array[2]) + Integer(time_array[3])
+	;~ }
+}
 ;### Context Menu
 
 create_menu(submenu:="context"){

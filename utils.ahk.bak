@@ -16,7 +16,7 @@ quote(txt) {
 	return txt
 }
 
-join(sep:=" ", params*){
+join(sep:=" ", params*) {
 	local i
 	str := ""
     for i, param in params
@@ -25,7 +25,7 @@ join(sep:=" ", params*){
 	return str
 }
 
-append_to_file(file_path, list_of_lines, line:=0){
+append_to_file(file_path, list_of_lines, line:=0) {
 	;~ line = 0 is the last line
 	local file := []
 	local new_file, i
@@ -43,7 +43,7 @@ append_to_file(file_path, list_of_lines, line:=0){
 	return
 }
 
-EncodeDecodeURI(str, encode:=true, component:=true){
+EncodeDecodeURI(str, encode:=true, component:=true) {
 	static Doc, JS, txt
 	Doc := ComObjCreate("htmlfile")
 	Doc.write("<meta http-equiv=""X-UA-Compatible"" content=""IE=9"">")
@@ -128,8 +128,7 @@ render_hotstrings(list, prefix:=":*:", context_type="none", context="none") {
 	return
 }
 
-get_screens_data(scr, debug:=0){
-	; TODO: auto enumerate screens based on coordinates
+get_screens_data(scr, debug:=0) {
 	local
 	SysGet, moncount, Monitorcount
 	scr["count"] := moncount
@@ -313,7 +312,7 @@ AHK_NOTIFYICON(wParam, lParam, msg, hwnd) {
 	}
 }
 
-GetSelectedText(){
+GetSelectedText() {
 	static focus := {}
 	focus["aWin"] := WinActive("A")
 	focus["clipboard"] := 0
@@ -329,7 +328,7 @@ GetSelectedText(){
 	return focus["clipboard"]
 }
 
-print_text(string){
+print_text(string) {
 	temp = %Clipboard%
 	Clipboard := string
 	ClipWait 2
@@ -496,7 +495,6 @@ check_file_type(filePath) {
     ; Return the file extension
     return fileExt
 }
-
 
 
 

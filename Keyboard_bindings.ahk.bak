@@ -5,16 +5,6 @@
 #Warn
 #SingleInstance Force
 
-SendMode, input
-SetCapsLockState, alwaysoff
-SetNumLockState, alwayson
-SetScrollLockState, AlwaysOff
-SetTitleMatchMode, 1
-CoordMode, Mouse, screen
-
-EnvGet, pandora, Pandora
-SetWorkingDir, %pandora%\ahk
-
 #Include init.ahk
 
 
@@ -81,14 +71,14 @@ $XButton1::#^+s
 #`:: browser(paths, "chatgpt", "window",, 1)
 *CapsLock:: Run % paths["cmd"]
 
-#NumLock:: browser(paths, "calc", "setting") ; calculator
+#NumLock:: browser(paths, "calc", "setting") ; TODO: fix
 
 
-#If (A_ComputerName="HEPHAESTUS")
+#If (work_mode!=0)
 	#w:: browser(paths, "vncviewer") ; vncviewer
 	#e:: browser(paths, "ms-teams")
 	#t:: browser(paths, "PDFXEdit", "tab") ; PDF browser
-#IF (A_ComputerName != "HEPHAESTUS")
+#IF (work_mode=0)
 	#e:: browser(paths, "LyX", "tab") ; LyX browser
 	#w:: browser(paths, "PDFXEdit", "tab") ; PDF browser
 #IF

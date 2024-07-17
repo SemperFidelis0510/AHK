@@ -6,24 +6,24 @@
 #SingleInstance Force
 
 #Include init.ahk
-
+#Include chatgpt.ahk
 
 ;### General
 Insert::return
-#RButton UP::context_menu("show")
-;~ XButton2::clip_to_mouse(paths)
 #Escape::close_win()
 
-;~ WheelRight::+^Tab
-;~ WheelLeft::^Tab
 
-$XButton2::SearchWeb(,,1)
-#XButton2::SearchWeb(,,1,0)
-$XButton1::#^+s
-#XButton1::#+t
-;~ $XButton1::voice_to_chatgpt()
-;~ $XButton2::send, {Alt}{Shift}{b}
-#Include chatgpt.ahk
+#Numpad7::   env_mode := "std"
+#Numpad8::   env_mode := "work"
+#Numpad9::   env_mode := "game"
+
+#If (env_mode!="game")
+	$XButton2::SearchWeb(,,1)
+	#XButton2::SearchWeb(,,1,0)
+	$XButton1::#^+s
+	#XButton1::#+t
+#If
+
 
 ;### Script Control
 #Pause::Pause
@@ -45,16 +45,7 @@ $XButton1::#^+s
 		listen(paths)
 
 	return
-;~ #F2::RunScript("voiceControl")
-;~ #F3::ChatGPT()
 
-
-;~ UI
-;~ XButton1::Browser_Back
-;~ XButton2::Browser_Forward
-
-
-;~ NumLock::rainmeter()
 
 ; program browsers
 
@@ -77,25 +68,28 @@ $XButton1::#^+s
 #NumLock:: browser(paths, "calc", "setting") ; TODO: fix
 
 
-#If (work_mode!=0)
+#If (envmode="work")
 	#w:: browser(paths, "vncviewer") ; vncviewer
 	#e:: browser(paths, "ms-teams")
 	#t:: browser(paths, "PDFXEdit", "tab") ; PDF browser
 	#d:: browser(paths, "documents", "group")
 	#n:: browser(paths, "ONENOTE",, 2) ; onenote
-#IF (work_mode=0)
+#IF (env_mode!="work")
 	#e:: browser(paths, "LyX", "tab") ; LyX browser
 	#w:: browser(paths, "PDFXEdit", "tab") ; PDF browser
 	#d:: browser(paths, "Discord") ; discord
 #IF
 
 ; system settigns
-#F2::  browser(paths, "ms-settings:apps-volume", "setting") ; sound settings
-#^F2:: browser(paths, "mmsys.cpl", "setting")
-;~ #F3::  browser(paths, "ms-settings:appsfeatures-app", "setting")
-#^F3:: browser(paths, "ms-settings:about", "setting")
-;~ #F4::  browser(paths, "ms-settings:display", "setting")
-;~ #F5::  browser(paths, "ms-settings:windowsupdate", "setting")
+	#If (env_mode!="game")
+	#F2::  browser(paths, "ms-settings:apps-volume", "setting") ; sound settings
+	#^F2:: browser(paths, "mmsys.cpl", "setting")
+	;~ #F3::  browser(paths, "ms-settings:appsfeatures-app", "setting")
+	#^F3:: browser(paths, "ms-settings:about", "setting")
+	;~ #F4::  browser(paths, "ms-settings:display", "setting")
+	;~ #F5::  browser(paths, "ms-settings:windowsupdate", "setting")
+#If
+
 
 ; window shape and location
 #Numpad1::   place_window(1) ; move to TV
@@ -106,19 +100,16 @@ $XButton1::#^+s
 #NumpadSub:: place_window("min")
 #NumpadAdd:: place_window("unmin")
 
+
+
 ; Media control
 #Ins::      Spotify(paths, "run") ; ~ fix path
-;~ >#End::     Spotify(paths, "like song")
-;~ >#PgUp::    Spotify(paths, "save to playlist")
-;~ >#PgDn::    Spotify(paths, "play playlist")
 #WheelUp::  Volume_Up
 #WheelDown::Volume_Down
 #MButton::  Media_Play_Pause
 
 
 ; contextual
-;~ #IfWinActive ahk_exe WhatsApp.exe
-;~ #`::send_love_emojis()
 #IfWinActive ahk_exe ChatGPT.exe
 Enter:: Send, +{Enter}
 ^Enter:: Send, {Enter}
@@ -166,10 +157,30 @@ AppsKey & WheelDown:: Volume_Down
 #IF
 
 
+;~ ideas and draft
+;~ #IfWinActive ahk_exe WhatsApp.exe
+;~ #`::send_love_emojis()
+
+;~ >#End::     Spotify(paths, "like song")
+;~ >#PgUp::    Spotify(paths, "save to playlist")
+;~ >#PgDn::    Spotify(paths, "play playlist")
+
+;~ #F2::RunScript("voiceControl")
+;~ #F3::ChatGPT()
 
 
+;~ UI
+;~ XButton1::Browser_Back
+;~ XButton2::Browser_Forward
+
+;~ NumLock::rainmeter()
+
+;~ $XButton1::voice_to_chatgpt()
+;~ $XButton2::send, {Alt}{Shift}{b}
+
+;~ WheelRight::+^Tab
+;~ WheelLeft::^Tab
 
 
-
-
-
+;~ #RButton UP::context_menu("show") ; TODO: fix
+;~ XButton2::clip_to_mouse(paths)

@@ -57,19 +57,24 @@ $XButton1::#^+s
 ;~ NumLock::rainmeter()
 
 ; program browsers
-#q:: browser(paths, "internet", "group") ; internet browsers
+
 #f:: browser(paths, "CabinetWClass", "folder") ; folder browser ~ fix path
 #s:: browser(paths, "programming", "group") ; programming softwares
-#a:: browser(paths, "WhatsApp", "winname",, 2)  ; communication programs ~ fix path
-#d:: browser(paths, "Discord") ; discord
-#m:: browser(paths, "OUTLOOK")  ; mail ~ fix window
-#n:: browser(paths, "ONENOTE",, 2) ; onenote
+
+#m:: browser(paths, "OUTLOOK")  ; mail
+
+
 #1:: browser(paths, "cmd", "window")
 #2:: browser(paths, "documents", "group")
-#3:: browser(paths, "communication", "group")
-#y:: browser(paths, "youtube", "site")
-#`:: browser(paths, "chatgpt", "window",, 1)
+#3:: browser(paths, "programming", "group") ; programming softwares
+#4:: browser(paths, "communication", "group")
+
+#y:: browser(paths, "youtube", "site") ; TODO: fix
+
 *CapsLock:: Run % paths["cmd"]
+#`:: browser(paths, "chatgpt", "window",, 1)
+#q:: browser(paths, "internet", "group") ; internet browsers
+#a:: browser(paths, "WhatsApp", "winname",, 2)  ; communication programs ~ fix path
 
 #NumLock:: browser(paths, "calc", "setting") ; TODO: fix
 
@@ -78,9 +83,12 @@ $XButton1::#^+s
 	#w:: browser(paths, "vncviewer") ; vncviewer
 	#e:: browser(paths, "ms-teams")
 	#t:: browser(paths, "PDFXEdit", "tab") ; PDF browser
+	#d:: browser(paths, "documents", "group")
+	#n:: browser(paths, "ONENOTE",, 2) ; onenote
 #IF (work_mode=0)
 	#e:: browser(paths, "LyX", "tab") ; LyX browser
 	#w:: browser(paths, "PDFXEdit", "tab") ; PDF browser
+	#d:: browser(paths, "Discord") ; discord
 #IF
 
 ; system settigns

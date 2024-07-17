@@ -496,6 +496,44 @@ check_file_type(filePath) {
     return fileExt
 }
 
+;~ terminal_req (cmd, raw_args, as_admin, python, debug_mode) {
+;~ local args := []
+;~ if not raw_args
+		;~ raw_args := []
+
+	;~ cmd := format_cmd(cmd)
+	;~ if raw_args {
+	;~ For key, val in raw_args
+			;~ args[key] := format_cmd(val)
+		;~ cmd := join(,cmd, args*)
+	;~ }
+
+	;~ if python {
+		;~ if apperent
+			;~ cmd := "python " . cmd
+		;~ else
+			;~ cmd := "pythonw " . cmd
+
+	;~ }
+
+	;~ if apperent
+		;~ cmd := " /k " . cmd
+	;~ else
+		;~ cmd := " /c " . cmd
+
+	;~ if debug_mode {
+		;~ msgbox, 6, Command to cmd, %cmd%
+		;~ Clipboard := cmd
+	;~ }
+
+	;~ if admin
+		;~ Run, *RunAs %comspec%%cmd%
+	;~ else
+		;~ Run, %comspec%%cmd%
+
+	;~ return cmd
+;~ }
+
 ;~ between(a, b, x, type:="nums") {
 	;~ switch type
 	;~ {

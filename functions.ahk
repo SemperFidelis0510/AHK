@@ -393,6 +393,9 @@ run_cmd(paths, cmd, raw_args:=0, apperent:=0, admin:=0, work_dir:="", script:=0)
 	if not raw_args
 		raw_args := []
 
+	if (debug="cmd")
+		apperent := 1
+
 	if paths.scripts[cmd] {
 		cmd := paths.scripts[cmd]
 		script := true
@@ -410,7 +413,7 @@ run_cmd(paths, cmd, raw_args:=0, apperent:=0, admin:=0, work_dir:="", script:=0)
 	}
 
 	if script {
-		if ((apperent > 0) and not debug)
+		if apperent
 			cmd := "python " . cmd
 		else
 			cmd := "pythonw " . cmd
@@ -420,15 +423,13 @@ run_cmd(paths, cmd, raw_args:=0, apperent:=0, admin:=0, work_dir:="", script:=0)
 	;~ if work_dir
 		;~ cmd := "cd /d " . work_dir . "`n" . cmd
 
-	if (apperent>0)
+	if apperent
 		cmd := " /k " . cmd
 	else
 		cmd := " /c " . cmd
 
 
-
-
-	if ((apperent=2) or (debug="cmd")) {
+	if apperent {
 		msgbox, 6, Command to cmd, %cmd%
 		Clipboard := cmd
 	}

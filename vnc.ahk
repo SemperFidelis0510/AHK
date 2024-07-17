@@ -12,11 +12,32 @@ store_hotstring() {
 	return
 }
 
-stamp(type, name) {
-	FormatTime, CurrentDateTime,, dd/MM/yy
-	SendInput % "// " . type . " by " . name . " at " . CurrentDateTime . ": "
+stamp(name:="", type:="") {
+	local txt, non_normal
+
+	non_normal := (name or type)
+
+	if non_normal
+		FormatTime, txt,, dd/MM/yy
+	else
+		FormatTime, txt,, dd_MM_yy_hh_mm
+
+	if name
+		txt := "by " . name . " at " . txt
+	if type
+		txt := "// " . type . " " . txt
+	if non_normal
+		txt := txt . ":"
+
+	SendInput % txt
 	return
 }
+
+;~ stamp(type, name) {
+	;~ FormatTime, CurrentDateTime,, dd/MM/yy
+	;~ SendInput % "// " . type . " by " . name . " at " . CurrentDateTime . ": "
+	;~ return
+;~ }
 
 ;~ alt_tab() {
 	;~ GetKeyState("alt", "p")
@@ -38,6 +59,6 @@ stamp(type, name) {
 ;~ :X:question::stamp("QUESTION", "btavor")
 
 ::fog_flag::-inc_comp 0
-
+:X:datetime_::stamp()
 
 #IF

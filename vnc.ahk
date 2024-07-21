@@ -50,7 +50,7 @@ stamp(name:="", type:="") {
 ^WheelRight::+^k
 ^WheelLeft::+^l
 
-^+h::store_hotstring()
+;~ ^+h::store_hotstring()
 
 ;~ ::secbr:://--------------------------------------------------------
 

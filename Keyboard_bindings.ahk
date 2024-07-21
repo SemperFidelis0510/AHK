@@ -1,5 +1,4 @@
 ﻿;### Initialization
-
 ;~ #Requires AutoHotkey v2.0
 #NoEnv
 #Warn
@@ -7,6 +6,11 @@
 
 #Include init.ahk
 #Include chatgpt.ahk
+
+;~ ### TODOs
+;~ change paths to global variable in functions
+;~ sort functions and utils
+
 
 ;### General
 Insert::return
@@ -65,10 +69,10 @@ Insert::return
 #q:: browser(paths, "internet", "group") ; internet browsers
 #a:: browser(paths, "WhatsApp", "winname",, 2)  ; communication programs ~ fix path
 
-#NumLock:: browser(paths, "calc", "setting") ; TODO: fix
+#NumLock:: browser(paths, "Calculator", "winname")
 
 
-#If (envmode="work")
+#If (env_mode="work")
 	#w:: browser(paths, "vncviewer") ; vncviewer
 	#e:: browser(paths, "ms-teams")
 	#t:: browser(paths, "PDFXEdit", "tab") ; PDF browser

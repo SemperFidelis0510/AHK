@@ -2,7 +2,7 @@
 #Warn
 
 SendMode, input
-SetCapsLockState, alwaysoff
+;~ SetCapsLockState, alwaysoff
 SetNumLockState, alwayson
 SetScrollLockState, AlwaysOff
 SetTitleMatchMode, 1

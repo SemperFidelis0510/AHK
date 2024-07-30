@@ -53,18 +53,19 @@ Insert::return
 
 ; program browsers
 
-#f:: browser(paths, "CabinetWClass", "folder") ; folder browser ~ fix path
+#f:: browser(paths, "CabinetWClass", "folder") ; TODO: fix path. make path env_mode specific. go between tabs
 #s:: browser(paths, "programming", "group") ; programming softwares
 #m:: browser(paths, "OUTLOOK")  ; mail
 
 #1:: browser(paths, "cmd", "window")
+^#1:: Run % paths["cmd"]
 #2:: browser(paths, "documents", "group")
 #3:: browser(paths, "programming", "group") ; programming softwares
 #4:: browser(paths, "communication", "group")
 
 #y:: browser(paths, "youtube", "site") ; TODO: fix
 
-*CapsLock:: Run % paths["cmd"]
+;~ *CapsLock:: Run % paths["cmd"]
 #`:: browser(paths, "chatgpt", "window",, 1)
 #q:: browser(paths, "internet", "group") ; internet browsers
 #a:: browser(paths, "WhatsApp", "winname",, 2)  ; communication programs ~ fix path
@@ -78,7 +79,7 @@ Insert::return
 	#t:: browser(paths, "PDFXEdit", "tab") ; PDF browser
 	#d:: browser(paths, "documents", "group")
 	#n:: browser(paths, "ONENOTE",, 2) ; onenote
-#IF (env_mode!="work")
+#If (env_mode!="work")
 	#e:: browser(paths, "LyX", "tab") ; LyX browser
 	#w:: browser(paths, "PDFXEdit", "tab") ; PDF browser
 	#d:: browser(paths, "Discord") ; discord

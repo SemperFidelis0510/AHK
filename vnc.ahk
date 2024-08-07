@@ -50,6 +50,14 @@ stamp(name:="", type:="") {
 ^WheelRight::+^k
 ^WheelLeft::+^l
 
+$XButton1::
+{
+    Click 2
+    Sleep 100
+    Click Middle
+}
+
+
 ;~ ^+h::store_hotstring()
 
 ;~ ::secbr:://--------------------------------------------------------

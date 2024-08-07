@@ -5,7 +5,7 @@ SetWorkingDir %A_ScriptDir%
 
 global debug := 0 ; 0, 1, 2, browser, cmd, pathobj, pathobj_call, screen
 global AsAdmin := 1
-global work_mode := 1
+global env_mode := "std" ; "std", "work", "game", "organize", "analytic", "studies" TODO: better keyboard interface
 global math_activation := "3209-0499-VQYQQU"
 global watchlist := []
 global hotstrings := {}

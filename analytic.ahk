@@ -7,13 +7,24 @@ SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 
 enum_screens() {
 	local
-	sysget, n, MonitorCount
-	Loop, %n%	{
+	txt := ""
+
+	SysGet, prim_scr, MonitorPrimary
+	txt .= "Primary screen index: " . prim_scr . "`n"
+
+	sysget, N, MonitorCount
+	Loop, %N%	{
 		sysget, scr, MonitorName, %A_Index%
-		msgbox the name of screen number %A_Index% is %scr%
+		sysget, scr_dim, Monitor, %A_Index%
+		txt .= "`nScreen index: " . A_Index
+		txt .= "`nScreen name: " . scr
+		txt .= "`nScreen coordinates: " . (prim_scr=scr)
+		txt .= "`n`tXAxis = [" . scr_dimLeft . ", " . scr_dimRight . "] "
+		txt .= "`n`tYAxis = [" . scr_dimTop . ", " . scr_dimBottom . "] "
+		if (A_Index<N)
+			txt .= "`n"
 	}
-	SysGet, scr, MonitorPrimary
-	msgbox the primary screen is %scr%
+	msgbox %txt%
 	return
 }
 

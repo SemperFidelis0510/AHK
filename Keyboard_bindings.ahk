@@ -1,5 +1,4 @@
 ﻿;### Initialization
-
 ;~ #Requires AutoHotkey v2.0
 #NoEnv
 #Warn
@@ -7,23 +6,27 @@
 
 #Include init.ahk
 
+;~ ### TODOs
+;~ change paths to global variable in functions
+;~ sort functions and utils
+
 
 ;### General
 Insert::return
-#RButton UP::context_menu("show")
-;~ XButton2::clip_to_mouse(paths)
 #Escape::close_win()
 
-;~ WheelRight::+^Tab
-;~ WheelLeft::^Tab
 
-$XButton2::SearchWeb(,,1)
-#XButton2::SearchWeb(,,1,0)
-$XButton1::#^+s
-#XButton1::#+t
-;~ $XButton1::voice_to_chatgpt()
-;~ $XButton2::send, {Alt}{Shift}{b}
-#Include chatgpt.ahk
+#Numpad7::   env_mode := "std"
+#Numpad8::   env_mode := "work"
+#Numpad9::   env_mode := "game"
+
+#If (env_mode!="game")
+	$XButton2::SearchWeb(,,1)
+	#XButton2::SearchWeb(,,1,0)
+	;~ $XButton1::#^+s
+	;~ #XButton1::#+t
+#If
+
 
 ;### Script Control
 #Pause::Pause
@@ -45,57 +48,52 @@ $XButton1::#^+s
 		listen(paths)
 
 	return
-;~ #F2::RunScript("voiceControl")
-;~ #F3::ChatGPT()
 
-
-;~ UI
-;~ XButton1::Browser_Back
-;~ XButton2::Browser_Forward
-
-
-;~ NumLock::rainmeter()
 
 ; program browsers
 
-#f:: browser(paths, "CabinetWClass", "folder") ; folder browser ~ fix path
+#f:: browser(paths, "CabinetWClass", "folder") ; TODO: fix path. make path env_mode specific. go between tabs
 #s:: browser(paths, "programming", "group") ; programming softwares
 #m:: browser(paths, "OUTLOOK")  ; mail
 
 #1:: browser(paths, "cmd", "window")
+^#1:: Run % paths["cmd"]
 #2:: browser(paths, "documents", "group")
 #3:: browser(paths, "programming", "group") ; programming softwares
 #4:: browser(paths, "communication", "group")
 
 #y:: browser(paths, "youtube", "site") ; TODO: fix
 
-*CapsLock:: Run % paths["cmd"]
+;~ *CapsLock:: Run % paths["cmd"]
 #`:: browser(paths, "chatgpt", "window",, 1)
 #q:: browser(paths, "internet", "group") ; internet browsers
 #a:: browser(paths, "WhatsApp", "winname",, 2)  ; communication programs ~ fix path
 
-#NumLock:: browser(paths, "calc", "setting") ; TODO: fix
+#NumLock:: browser(paths, "Calculator", "winname")
 
 
-#If (work_mode!=0)
+#If (env_mode="work")
 	#w:: browser(paths, "vncviewer") ; vncviewer
 	#e:: browser(paths, "ms-teams")
 	#t:: browser(paths, "PDFXEdit", "tab") ; PDF browser
 	#d:: browser(paths, "documents", "group")
 	#n:: browser(paths, "ONENOTE",, 2) ; onenote
-#IF (work_mode=0)
+#If (env_mode!="work")
 	#e:: browser(paths, "LyX", "tab") ; LyX browser
 	#w:: browser(paths, "PDFXEdit", "tab") ; PDF browser
 	#d:: browser(paths, "Discord") ; discord
 #IF
 
 ; system settigns
-#F2::  browser(paths, "ms-settings:apps-volume", "setting") ; sound settings
-#^F2:: browser(paths, "mmsys.cpl", "setting")
-;~ #F3::  browser(paths, "ms-settings:appsfeatures-app", "setting")
-#^F3:: browser(paths, "ms-settings:about", "setting")
-;~ #F4::  browser(paths, "ms-settings:display", "setting")
-;~ #F5::  browser(paths, "ms-settings:windowsupdate", "setting")
+	#If (env_mode!="game")
+	#F2::  browser(paths, "ms-settings:apps-volume", "setting") ; sound settings
+	#^F2:: browser(paths, "mmsys.cpl", "setting")
+	;~ #F3::  browser(paths, "ms-settings:appsfeatures-app", "setting")
+	#^F3:: browser(paths, "ms-settings:about", "setting")
+	;~ #F4::  browser(paths, "ms-settings:display", "setting")
+	;~ #F5::  browser(paths, "ms-settings:windowsupdate", "setting")
+#If
+
 
 ; window shape and location
 #Numpad1::   place_window(1) ; move to TV
@@ -106,11 +104,10 @@ $XButton1::#^+s
 #NumpadSub:: place_window("min")
 #NumpadAdd:: place_window("unmin")
 
+
+
 ; Media control
 #Ins::      Spotify(paths, "run") ; ~ fix path
-;~ >#End::     Spotify(paths, "like song")
-;~ >#PgUp::    Spotify(paths, "save to playlist")
-;~ >#PgDn::    Spotify(paths, "play playlist")
 #WheelUp::  Volume_Up
 #WheelDown::Volume_Down
 #MButton::  Media_Play_Pause
@@ -119,9 +116,7 @@ $XButton1::#^+s
 ; contextual
 ;~ #IfWinActive ahk_exe WhatsApp.exe
 ;~ #`::send_love_emojis()
-;~ #IfWinActive ahk_exe ChatGPT.exe
-
-
+#Include chatgpt.ahk
 #IfWinActive ahk_exe SciTE.exe
 F1::Help_SciTE()
 ^R::reload
@@ -165,10 +160,30 @@ AppsKey & WheelDown:: Volume_Down
 #IF
 
 
+;~ ideas and draft
+;~ #IfWinActive ahk_exe WhatsApp.exe
+;~ #`::send_love_emojis()
+
+;~ >#End::     Spotify(paths, "like song")
+;~ >#PgUp::    Spotify(paths, "save to playlist")
+;~ >#PgDn::    Spotify(paths, "play playlist")
+
+;~ #F2::RunScript("voiceControl")
+;~ #F3::ChatGPT()
 
 
+;~ UI
+;~ XButton1::Browser_Back
+;~ XButton2::Browser_Forward
+
+;~ NumLock::rainmeter()
+
+;~ $XButton1::voice_to_chatgpt()
+;~ $XButton2::send, {Alt}{Shift}{b}
+
+;~ WheelRight::+^Tab
+;~ WheelLeft::^Tab
 
 
-
-
-
+;~ #RButton UP::context_menu("show") ; TODO: fix
+;~ XButton2::clip_to_mouse(paths)

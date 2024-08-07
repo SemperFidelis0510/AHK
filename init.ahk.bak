@@ -22,8 +22,14 @@ if (A_ComputerName="HEPHAESTUS")
 If AsAdmin and not A_IsAdmin
 	Run, *RunAs autohotkey.exe "%A_ScriptFullPath%" /restart
 
-
-
+for group, g_list in control_groups {
+	for _, program in g_list {
+		if InStr(program, "exe")
+			GroupAdd, %group%, ahk_exe %program%
+		else
+			GroupAdd, %group%, %program%
+	}
+}
 
 get_screens_data(screens, debug)
 

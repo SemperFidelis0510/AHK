@@ -119,10 +119,9 @@ $XButton1::#^+s
 ; contextual
 ;~ #IfWinActive ahk_exe WhatsApp.exe
 ;~ #`::send_love_emojis()
-#IfWinActive ahk_exe ChatGPT.exe
-Enter:: Send, +{Enter}
-^Enter:: Send, {Enter}
-^D::MClick(-987, 827)
+;~ #IfWinActive ahk_exe ChatGPT.exe
+
+
 #IfWinActive ahk_exe SciTE.exe
 F1::Help_SciTE()
 ^R::reload
@@ -140,7 +139,7 @@ F11::
 
 
 
-#If (paths.computer[1] != "CHRONOS6")
+#If (paths.computer[1] != "CHRONOS7")
 AppsKey & Insert::    Media_Play_Pause
 AppsKey & Delete::    Media_Stop
 AppsKey & Home::      Media_Next

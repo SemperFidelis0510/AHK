@@ -16,16 +16,12 @@ Insert::return
 #Escape::close_win()
 
 
-#Numpad7::   env_mode := "std"
-#Numpad8::   env_mode := "work"
-#Numpad9::   env_mode := "game"
-
-#If (env_mode!="game")
-	$XButton2::SearchWeb(,,1)
-	#XButton2::SearchWeb(,,1,0)
-	;~ $XButton1::#^+s
-	;~ #XButton1::#+t
-#If
+^#Numpad1:: change_env_mode("std")
+^#Numpad2:: change_env_mode("work")
+^#Numpad3:: change_env_mode("game")
+^#Numpad4:: change_env_mode("organize")
+^#Numpad5:: change_env_mode("debug")
+^#Numpad6:: change_env_mode("studies")
 
 
 ;### Script Control
@@ -50,48 +46,77 @@ Insert::return
 	return
 
 
+
 ; program browsers
-
-#f:: browser(paths, "CabinetWClass", "folder") ; TODO: fix path. make path env_mode specific. go between tabs
-#s:: browser(paths, "programming", "group") ; programming softwares
-#m:: browser(paths, "OUTLOOK")  ; mail
-
 #1:: browser(paths, "cmd", "window")
 ^#1:: Run % paths["cmd"]
 #2:: browser(paths, "documents", "group")
 #3:: browser(paths, "programming", "group") ; programming softwares
 #4:: browser(paths, "communication", "group")
 
-#y:: browser(paths, "youtube", "site") ; TODO: fix
-
-;~ *CapsLock:: Run % paths["cmd"]
 #`:: browser(paths, "chatgpt", "window",, 1)
 #q:: browser(paths, "internet", "group") ; internet browsers
 #a:: browser(paths, "WhatsApp", "winname",, 2)  ; communication programs ~ fix path
+#f:: browser(paths, "CabinetWClass", "folder") ; TODO: fix path. make path env_mode specific. go between tabs
 
 #NumLock:: browser(paths, "Calculator", "winname")
 
+;~ #y:: browser(paths, "youtube", "site") ; TODO: fix
+
+
+#If (env_mode="std")
+	#d:: browser(paths, "Discord") ; discord
+	#m:: browser(paths, "OUTLOOK")  ; mail
+	#n:: browser(paths, "ONENOTE",, 2) ; onenote
+	#s:: browser(paths, "programming", "group") ; programming softwares
 
 #If (env_mode="work")
 	#w:: browser(paths, "vncviewer") ; vncviewer
 	#e:: browser(paths, "ms-teams")
 	#t:: browser(paths, "PDFXEdit", "tab") ; PDF browser
 	#d:: browser(paths, "documents", "group")
-	#n:: browser(paths, "ONENOTE",, 2) ; onenote
-#If (env_mode!="work")
-	#e:: browser(paths, "LyX", "tab") ; LyX browser
-	#w:: browser(paths, "PDFXEdit", "tab") ; PDF browser
-	#d:: browser(paths, "Discord") ; discord
-#IF
+	#n:: browser(paths, "ONENOTE",, 2)
+	#m:: browser(paths, "OUTLOOK")
+	#s:: browser(paths, "programming", "group") ; programming softwares
+	#:: browser(paths, "vpnui")
 
-; system settigns
-	#If (env_mode!="game")
+#If (env_mode="game")
+	#d:: browser(paths, "Discord")
+	#s:: browser(paths, "SC2_x64")
+	#m:: browser(paths, "MTGA")
+
+#If (env_mode="organize")
+	#m:: browser(paths, "OUTLOOK")
+
+#If (env_mode="debug")
+	#1::  get_pressed_key()
+	^#1:: get_pressed_key(1)
+	#2::  get_activeWin_hwnd()
+	#3::  enum_screens()
+	#4::  get_mouse_pos()
+	#5::  name_computer()
+
+	#s:: browser(paths, "programming", "group") ; programming softwares
+
+	; system settigns
 	#F2::  browser(paths, "ms-settings:apps-volume", "setting") ; sound settings
 	#^F2:: browser(paths, "mmsys.cpl", "setting")
-	;~ #F3::  browser(paths, "ms-settings:appsfeatures-app", "setting")
+	#F3::  browser(paths, "ms-settings:appsfeatures-app", "setting")
 	#^F3:: browser(paths, "ms-settings:about", "setting")
-	;~ #F4::  browser(paths, "ms-settings:display", "setting")
-	;~ #F5::  browser(paths, "ms-settings:windowsupdate", "setting")
+	#F4::  browser(paths, "ms-settings:display", "setting")
+	#F5::  browser(paths, "ms-settings:windowsupdate", "setting")
+
+#If (env_mode="studies")
+	#e:: browser(paths, "LyX", "tab") ; LyX browser
+	#w:: browser(paths, "PDFXEdit", "tab") ; PDF browser
+	#s:: browser(paths, "programming", "group") ; programming softwares
+
+#If
+
+
+#If (env_mode!="game")
+	$XButton2::SearchWeb(,,1)
+	#XButton2::SearchWeb(,,1,0)
 #If
 
 
@@ -105,9 +130,10 @@ Insert::return
 #NumpadAdd:: place_window("unmin")
 
 
-
 ; Media control
-#Ins::      Spotify(paths, "run") ; ~ fix path
+#Ins::      Spotify(paths, "run")
+#Home::     Spotify(paths, "like_song")
+#End::      Spotify(paths, "shuffle")
 #WheelUp::  Volume_Up
 #WheelDown::Volume_Down
 #MButton::  Media_Play_Pause
@@ -150,14 +176,6 @@ AppsKey & WheelDown:: Volume_Down
 ~+ UP::SetCapsLockState, AlwaysOff
 #IF
 
-#If debug
-#1::  get_pressed_key()
-^#1:: get_pressed_key(1)
-#2::  get_activeWin_hwnd()
-#3::  enum_screens()
-#4::  get_mouse_pos()
-#5::  name_computer()
-#IF
 
 
 ;~ ideas and draft

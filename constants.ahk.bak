@@ -3,7 +3,7 @@ SendMode, input
 SetWorkingDir %A_ScriptDir%
 #Include utils.ahk
 
-global debug := 1 ; 0, 1, 2, browser, cmd, pathobj, pathobj_call, screen
+global debug := 0 ; 0, 1, 2, browser, cmd, pathobj, pathobj_call, screen
 global AsAdmin := 1
 global env_mode := "std" ; "std", "work", "game", "organize", "analytic", "studies" TODO: better keyboard interface
 global math_activation := "3209-0499-VQYQQU"
@@ -18,7 +18,6 @@ global TTState := ""
 global Null := False
 global group_names := ["programming", "communication", "documents", "internet"]
 global comp_names := ["CHRONOS7", "ZEUS2", "HEPHAESTUS", "PHYAROM2"]
-;~ global groups := {"programming": programming, "communication": communication}
 global HS := {}
 global control_groups := {"programming": ["SciTE.exe", "pycharm64.exe", "Mathematica.exe", "hh.exe", "EXCEL.exe", "notepad++.exe", "notepad.exe"]
 						, "communication": ["WhatsApp", "OUTLOOK.exe", "Discord.exe", "ms-teams.exe"]
@@ -74,28 +73,6 @@ global screens := {"Xrange": [], "Yrange": [], "dim": [], "COM": []
 
 
 
-;~ Switch A_ComputerName{
-	;~ Case "PHYAROM2":
-	;~ Case "ZEUS2":
-
-	;~ Case "HEPHAESTUS":
-		;~ screens["order"] := ["\\.\DISPLAY3", "\\.\DISPLAY2", "\\.\DISPLAY1"]
-		;~ screens["order"] := ["\\.\DISPLAY3", "\\.\DISPLAY2", "\\.\DISPLAY1"]
-	;~ Case "CHRONOS7":
-		;~ screens["names"] := ["wacom", "main", "secondary"]
-		;~ screens["comm"] := 1
-		;~ SysGet, scr, MonitorPrimary
-		;~ sysget, scr, MonitorName, scr
-		;~ If scr in \\.\DISPLAY9,\\.\DISPLAY1,\\.\DISPLAY8
-			;~ screens["order"] := ["\\.\DISPLAY9", "\\.\DISPLAY1", "\\.\DISPLAY8"]
-		;~ Else
-			;~ screens["order"] := ["\\.\DISPLAY5", "\\.\DISPLAY1", "\\.\DISPLAY4"]
-;~ }
-;~ scr :=
-
-;~ for scr_ind in screens["order"] {
-	;~ msgbox % scr_ind
-;~ }
 
 global SearchEngines := {}
 SearchEngines["google"] := "http://www.google.com/search?q="

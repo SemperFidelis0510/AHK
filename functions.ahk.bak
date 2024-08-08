@@ -429,7 +429,7 @@ run_cmd(paths, cmd, raw_args:=0, apperent:=0, admin:=0, work_dir:="", script:=0)
 		cmd := " /c " . cmd
 
 
-	if ((apperent=2) or (debug="cmd")) {
+	if apperent {
 		msgbox, 6, Command to cmd, %cmd%
 		Clipboard := cmd
 	}
@@ -729,6 +729,28 @@ recall(path) {
 	return
 }
 
+change_env_mode(mode) {
+	local
+	global env_mode, debug, paths
+
+
+	if (paths.computer[1] = "HEPHAESTUS") {
+		if mode in game
+			return
+	}
+
+	if (mode = "analytic")
+		global debug = 1
+	else
+		global debug = 0
+
+	env_mode := mode
+
+	StringUpper, env_name, mode
+	MsgBox,, Environment Mode Changed, Enviromment mode: %env_name%, 2
+
+	return
+}
 
 
 ;### Programs
@@ -847,18 +869,24 @@ AddWikiURL2NP() {
 
 ; spotify
 Spotify(paths, cmd) {
+	browser(paths, "Spotify")
 	switch cmd
 	{
 		case "run":
-			browser(paths, "Spotify")
-		case "like song":
-			run_cmd(paths, "spt playback --like")
-		case "save to playlist":
-			InputBox, playlist, Save to Playlist, Choose playlist
-			run_cmd(paths, paths.revise("pandora", "Spotify\spotify_control.py"), ["add", playlist], 0,,, 1)
-		case "play playlist":
-			InputBox, playlist, Play to Playlist, Choose playlist
-			run_cmd(paths, paths.revise("pandora", "Spotify\spotify_control.py"), ["play", playlist],0,,, 1)
+
+		case "like_song":
+			;~ run_cmd(paths, "spt playback --like")
+			Send, +!{b}
+			place_window("min")
+		case "shuffle"
+			Send, ^{s}
+			place_window("min")
+		;~ case "save_to_playlist":
+			;~ InputBox, playlist, Save to Playlist, Choose playlist
+			;~ run_cmd(paths, paths.revise("pandora", "Spotify\spotify_control.py"), ["add", playlist], 0,,, 1)
+		;~ case "play_playlist":
+			;~ InputBox, playlist, Play to Playlist, Choose playlist
+			;~ run_cmd(paths, paths.revise("pandora", "Spotify\spotify_control.py"), ["play", playlist],0,,, 1)
 	}
 	return
 }

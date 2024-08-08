@@ -14,10 +14,13 @@ SetWorkingDir, %pandora%\ahk
 #Include constants.ahk
 #Include functions.ahk
 
-if (debug!=0)
+if (debug!=0) {
 	AsAdmin := 0
+	change_env_mode("debug")
+}
+
 if (A_ComputerName="HEPHAESTUS")
-	work_mode := 1
+	change_env_mode("work")
 
 If AsAdmin and not A_IsAdmin
 	Run, *RunAs autohotkey.exe "%A_ScriptFullPath%" /restart

@@ -27,8 +27,8 @@ Insert::return
 ;### Script Control
 #Pause::Pause
 +#Pause::ExitApp
-#ScrollLock::Edit_SciTe(paths)
-+#ScrollLock:: Reload_SciTE(paths)
++#ScrollLock::Edit_SciTe(paths)
+#ScrollLock:: Reload_SciTE(paths)
 
 
 
@@ -44,8 +44,6 @@ Insert::return
 		listen(paths)
 
 	return
-
-
 
 ; program browsers
 #1:: browser(paths, "cmd", "window")
@@ -78,11 +76,13 @@ Insert::return
 	#n:: browser(paths, "ONENOTE",, 2)
 	#m:: browser(paths, "OUTLOOK")
 	#s:: browser(paths, "programming", "group") ; programming softwares
-	#:: browser(paths, "vpnui")
+	#v:: browser(paths, "vpnui")
 
 #If (env_mode="game")
 	#d:: browser(paths, "Discord")
 	#s:: browser(paths, "SC2_x64")
+	#b:: browser(paths, "Battle.net")
+	#h:: browser(paths, "HeroesOfTheStorm_x64")
 	#m:: browser(paths, "MTGA")
 
 #If (env_mode="organize")

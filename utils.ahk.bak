@@ -49,6 +49,17 @@ render_hotstrings(list, prefix:=":*:", context_type="none", context="none") {
 	return
 }
 
+min_all_wins() {
+	WinGet, WindowList, List,,, Program Manager
+	Loop, %WindowList%
+	{
+		WinGetClass, Class, % "ahk_id " . WindowList%A_Index%
+		IF (Class <> "Shell_SecondaryTrayWnd" And Class <> "Shell_TrayWnd")
+			WinMinimize, % "ahk_id " . WindowList%A_Index%
+	}
+	return
+}
+
 
 ; list handling
 inlist(o, l) {
@@ -210,6 +221,29 @@ append_to_file(file_path, list_of_lines, line:=0) {
 	return
 }
 
+seach_file(search_path, file_name, match_type:="complete") {
+	search_path := search_path . "\*"
+	Loop, Files, %search_path%, FDR
+	{
+		switch match_type
+		{
+			Case "complete":
+				if (A_LoopFileName=file_name)
+					return A_LoopFileLongPath
+			Case "partial":
+				if InStr(A_LoopFileName, file_name)
+					return A_LoopFileLongPath
+			Case "regex":
+				if RegExMatch(A_LoopFileName, file_name)
+					return A_LoopFileLongPath
+		}
+	}
+	return ""
+}
+
+find_windowsapp_path(name) {
+	return
+}
 
 ; basic arithmatic
 in_rect(coo, rect) {
@@ -231,7 +265,7 @@ between(a, b, x, type:="nums") {
 	}
 }
 
-; probing
+; displays
 get_screens_data(scr, debug:=0) {
 	local
 	SysGet, moncount, Monitorcount
@@ -255,23 +289,30 @@ get_screens_data(scr, debug:=0) {
 
 		scr["COM"].push([(monRight+monLeft)/2, (monBottom+monTop)/2])
 	}
-	if (moncount>1) {
-		for _, i in range(moncount-1) {
-			for _, j in range(i+1, moncount) {
-				if (scr["Xrange"][i][1] > scr["Xrange"][j][1]) {
-					temp := scr["order"][i]
-					scr["order"][i] := scr["order"][j]
-					scr["order"][j] := temp
-				}
-			}
-		}
-	}
-	if (moncount=2) {
-		scr["order"] := [scr["order"][1], scr["main"], scr["order"][2]]
-	}
+	;~ if (moncount>1) {
+		;~ ; sort bubble
+		;~ for i, _ in range(moncount - 1) {
+			;~ for j, _ in range(moncount - i) {
+				;~ if (scr["Xrange"][j][1] > scr["Xrange"][j + 1][1]) {
+					;~ ; Swap the order
+					;~ msgbox %  scr["Xrange"][j][1] . " | " . scr["Xrange"][j + 1][1]
+					;~ msgbox % "before: " . scr["order"][j] . " | " . scr["order"][j + 1]
+					;~ temp := scr["order"][j]
+					;~ scr["order"][j] := scr["order"][j + 1]
+					;~ scr["order"][j + 1] := temp
+					;~ msgbox % "after: " . scr["order"][j] . " | " . scr["order"][j + 1]
+				;~ }
+			;~ }
+		;~ }
+	;~ }
+	;~ if (moncount=2) {
+		;~ scr["order"] := [scr["order"][1], scr["main"], scr["order"][2]]
+	;~ }
+	scr["order"] := [3,1,2]
 	return scr
 }
 
+; probing
 AnyWinActive(param*) {
 	local
 	for Each, win in param {
@@ -291,6 +332,8 @@ WinID(name) {
 }
 
 
+
+; to sort
 IndexOf(list, var, delim:="") {
 	local
 	if delim {

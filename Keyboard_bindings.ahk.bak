@@ -11,6 +11,8 @@
 ;~ sort functions and utils
 
 
+#o:: my_func()
+
 ;### General
 Insert::return
 #Escape::close_win()
@@ -27,8 +29,8 @@ Insert::return
 ;### Script Control
 #Pause::Pause
 +#Pause::ExitApp
-+#ScrollLock::Edit_SciTe(paths)
-#ScrollLock:: Reload_SciTE(paths)
+#ScrollLock::Edit_SciTe(paths)
+ScrollLock:: Reload_SciTE(paths)
 
 
 
@@ -45,8 +47,6 @@ Insert::return
 
 	return
 
-
-
 ; program browsers
 #1:: browser(paths, "cmd", "window")
 ^#1:: Run % paths["cmd"]
@@ -54,7 +54,7 @@ Insert::return
 #3:: browser(paths, "programming", "group") ; programming softwares
 #4:: browser(paths, "communication", "group")
 
-#`:: browser(paths, "chatgpt", "window",, 1)
+
 #q:: browser(paths, "internet", "group") ; internet browsers
 #a:: browser(paths, "WhatsApp", "winname",, 2)  ; communication programs ~ fix path
 #f:: browser(paths, "CabinetWClass", "folder") ; TODO: fix path. make path env_mode specific. go between tabs
@@ -63,22 +63,25 @@ Insert::return
 
 ;~ #y:: browser(paths, "youtube", "site") ; TODO: fix
 
-
 #If (env_mode="std")
 	#d:: browser(paths, "Discord") ; discord
-	#m:: browser(paths, "OUTLOOK")  ; mail
-	#n:: browser(paths, "ONENOTE",, 2) ; onenote
+	#m:: browser(paths, "olk")  ; mail
+	#n:: browser(paths, "ONENOTE") ; onenote
 	#s:: browser(paths, "programming", "group") ; programming softwares
 
 #If (env_mode="work")
 	#w:: browser(paths, "vncviewer") ; vncviewer
 	#e:: browser(paths, "ms-teams")
-	#t:: browser(paths, "PDFXEdit", "tab") ; PDF browser
+	#t:: browser(paths, "Microsoft To Do", "winname",, 2)
 	#d:: browser(paths, "documents", "group")
-	#n:: browser(paths, "ONENOTE",, 2)
-	#m:: browser(paths, "OUTLOOK")
+	#n:: browser(paths, "ONENOTE")
+	#m:: browser(paths, "olk")
 	#s:: browser(paths, "programming", "group") ; programming softwares
 	#v:: browser(paths, "vpnui")
+	;~ #`:: browser(paths, "copilot", "site",0 , 1)
+	#`:: browser(paths, "chatgpt", "window",0 , 1)
+#If (env_mode!="work")
+	#`:: browser(paths, "chatgpt", "window",0 , 1)
 
 #If (env_mode="game")
 	#d:: browser(paths, "Discord")
@@ -86,9 +89,12 @@ Insert::return
 	#b:: browser(paths, "Battle.net")
 	#h:: browser(paths, "HeroesOfTheStorm_x64")
 	#m:: browser(paths, "MTGA")
+#If (env_mode!="game")
+	$XButton2::SearchWeb(,,1)
+	#XButton2::SearchWeb(,,1,0)
 
 #If (env_mode="organize")
-	#m:: browser(paths, "OUTLOOK")
+	#m:: browser(paths, "olk")
 
 #If (env_mode="debug")
 	#1::  get_pressed_key()
@@ -113,12 +119,7 @@ Insert::return
 	#w:: browser(paths, "PDFXEdit", "tab") ; PDF browser
 	#s:: browser(paths, "programming", "group") ; programming softwares
 
-#If
 
-
-#If (env_mode!="game")
-	$XButton2::SearchWeb(,,1)
-	#XButton2::SearchWeb(,,1,0)
 #If
 
 
@@ -127,8 +128,9 @@ Insert::return
 #Numpad2::   place_window(2) ; move to Wacom
 #Numpad3::   place_window(3) ; move to main screen
 #Numpad5::   place_window("max")
-#Numpad0::   place_window("unmax")
-#NumpadSub:: place_window("min")
+#NumpadSub::   place_window("unmax")
+#NumpadDot::   min_all_wins()
+#Numpad0:: place_window("min")
 #NumpadAdd:: place_window("unmin")
 
 

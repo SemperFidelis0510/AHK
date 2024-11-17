@@ -23,11 +23,11 @@ if (debug!=0) {
 	change_env_mode("debug")
 }
 
-if (A_ComputerName="HEPHAESTUS") or schedule.check_working()
+if ((A_ComputerName="HEPHAESTUS") or schedule.check_working())
 	change_env_mode("work")
 
 
-get_screens_data(screens, debug)
+screens = get_screens_data(screens, debug)
 paths.load()
 ;~ generateMenus()
 HS := LoadHotstrings(paths["hotstring_ini"])

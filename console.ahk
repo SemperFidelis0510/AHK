@@ -3,15 +3,22 @@
 #SingleInstance Force
 SendMode, input
 SetWorkingDir %A_ScriptDir%
+#Include constants.ahk
+#Include functions.ahk
 #Include utils.ahk
+
 ;~ #Include %A_ScriptDir%
 ;~ #Include functions.ahk
 ;~ DetectHiddenWindows, off
 ExitOnEnd := True ;exit flag
 varnames := "x,y,z,win,a,b,c,d,w"
 
-x := [1,2]
-msgbox % x
+
+
+get_screens_data(screens, debug:=0)
+
+;~ x := [1,2]
+;~ msgbox % x
 
 ;~ between([3,0],[4,4],[3,5], "time")
 

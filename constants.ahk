@@ -53,4 +53,10 @@ SearchEngines["youtube"] := "https://www.youtube.com/results?search_query="
 SearchEngines["confluence"] := "https://confluence.nvidia.com/dosearchsite.action?cql=siteSearch+~+"
 
 
+global KeyMapDict := {"std": {"#d": ["Discord"], "#m": ["OUTLOOK"]}
+					,"work": {}
+					,"game": {}
+					,"organize": {}
+					,"debug": {}
+					,"studies": {}}
 

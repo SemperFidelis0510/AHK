@@ -729,9 +729,9 @@ recall(path) {
 	return
 }
 
-change_env_mode(mode) {
+change_env_mode(paths, mode, silent:=0) {
 	local
-	global env_mode, debug, paths
+	global env_mode, debug
 
 
 	if (paths.computer[1] = "HEPHAESTUS") {
@@ -740,14 +740,16 @@ change_env_mode(mode) {
 	}
 
 	if (mode = "analytic")
-		global debug = 1
+		debug = 1
 	else
-		global debug = 0
+		debug = 0
 
 	env_mode := mode
 
-	StringUpper, env_name, mode
-	MsgBox,, Environment Mode Changed, Enviromment mode: %env_name%, 2
+	if not silent {
+		StringUpper, env_name, mode
+		MsgBox,, Environment Mode Changed, Enviromment mode: %env_name%, 2
+	}
 
 	return
 }

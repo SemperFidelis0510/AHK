@@ -45,13 +45,11 @@ stamp(name:="", type:="") {
 
 #IfWinActive ahk_exe vncviewer.exe
 
-!Tab::Send, ^+l
+AltTab::Send, ^+l
 
 ^WheelRight::+^k
 ^WheelLeft::+^l
 
-<<<<<<< HEAD
-=======
 $XButton1::
 {
     Click 2
@@ -60,7 +58,6 @@ $XButton1::
 }
 
 
->>>>>>> f14207542f834a5e7a8731a57deb850f36ad51b3
 ;~ ^+h::store_hotstring()
 
 ;~ ::secbr:://--------------------------------------------------------

@@ -11,17 +11,36 @@ ExitOnEnd := True ;exit flag
 varnames := "x,y,z,win,a,b,c,d,w"
 
 
-x := 3
-y := [1,2]
-z := y.MaxIndex()
 
-Loop % (x-z)
-{
-	y.push(y[y.Maxindex()])
+my_func() {
+
+	x := 0
+
+	tmp := Clipboard
+	Clipboard =
+	Send, ^!c
+	ClipWait, 4, 1
+	msgbox, 4
+	if Clipboard
+		x := Clipboard
+	Clipboard := tmp
+	ClipWait, 1
+	return x
 }
 
-for _, i in y
-	msgbox % i
+#Y::my_func()
+
+;~ x := 3
+;~ y := [1,2]
+;~ z := y.MaxIndex()
+
+;~ Loop % (x-z)
+;~ {
+	;~ y.push(y[y.Maxindex()])
+;~ }
+
+;~ for _, i in y
+	;~ msgbox % i
 
 
 

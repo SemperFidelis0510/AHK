@@ -13,15 +13,17 @@
 
 ;### General
 Insert::return
+CapsLock::return
+#CapsLock::~CapsLock
 #Escape::close_win()
 
 
-^#Numpad1:: change_env_mode("std")
-^#Numpad2:: change_env_mode("work")
-^#Numpad3:: change_env_mode("game")
-^#Numpad4:: change_env_mode("organize")
-^#Numpad5:: change_env_mode("debug")
-^#Numpad6:: change_env_mode("studies")
+^#Numpad1:: change_env_mode(paths, "std")
+^#Numpad2:: change_env_mode(paths, "work")
+^#Numpad3:: change_env_mode(paths, "game")
+^#Numpad4:: change_env_mode(paths, "organize")
+^#Numpad5:: change_env_mode(paths, "debug")
+^#Numpad6:: change_env_mode(paths, "studies")
 
 
 ;### Script Control
@@ -78,7 +80,7 @@ Insert::return
 	#n:: browser(paths, "ONENOTE",, 2)
 	#m:: browser(paths, "OUTLOOK")
 	#s:: browser(paths, "programming", "group") ; programming softwares
-	#:: browser(paths, "vpnui")
+	#v:: browser(paths, "vpnui")
 
 #If (env_mode="game")
 	#d:: browser(paths, "Discord")

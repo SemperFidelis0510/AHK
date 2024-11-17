@@ -14,13 +14,16 @@ SetWorkingDir, %pandora%\ahk
 #Include constants.ahk
 #Include functions.ahk
 
+global paths := new PathClass
+paths.load()
+
 if (debug!=0) {
 	AsAdmin := 0
-	change_env_mode("debug")
+	change_env_mode(paths, "debug")
 }
 
 if (A_ComputerName="HEPHAESTUS")
-	change_env_mode("work")
+	change_env_mode(paths, "work", 1)
 
 If AsAdmin and not A_IsAdmin
 	Run, *RunAs autohotkey.exe "%A_ScriptFullPath%" /restart
@@ -36,8 +39,7 @@ for group, g_list in control_groups {
 
 get_screens_data(screens, debug)
 
-global paths := new PathClass
-paths.load()
+
 
 ;~ generateMenus()
 

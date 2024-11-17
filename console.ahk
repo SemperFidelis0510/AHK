@@ -10,7 +10,8 @@ SetWorkingDir %A_ScriptDir%
 ExitOnEnd := True ;exit flag
 varnames := "x,y,z,win,a,b,c,d,w"
 
-
+x := [1,2]
+msgbox % x
 
 my_func() {
 
@@ -29,6 +30,27 @@ my_func() {
 }
 
 #Y::my_func()
+
+
+;~ between([3,0],[4,4],[3,5], "time")
+
+
+;~ #7::
+	;~ tmp := Clipboard
+	;~ Clipboard =
+	;~ Send, ^c
+	;~ ClipWait, 5
+	;~ msgbox, 1
+	;~ if Clipboard
+		;~ msgbox % Clipboard
+	;~ Clipboard := tmp
+	;~ ClipWait, 5
+	;~ msgbox, 5
+	;~ return
+
+;~ #8::
+	;~ msgbox % Clipboard
+	;~ return
 
 ;~ x := 3
 ;~ y := [1,2]

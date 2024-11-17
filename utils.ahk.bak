@@ -3,108 +3,29 @@ SendMode, input
 SetWorkingDir, %A_ScriptDir%
 
 
-inlist(o, l) {
-	local x, i
-	for i, x in l
-		if (o=x)
-			return true
-	return false
-}
+; basic computer actions
+GetSelectedText(copy:=1) {
+	static focus := {}
+	focus["aWin"] := WinActive("A")
+	focus["clipboard"] := 0
 
-quote(txt) {
-	txt = "%txt%"
-	return txt
-}
-
-join(sep:=" ", params*) {
-	local i
-	str := ""
-    for i, param in params
-        str .= param . sep
-	StringTrimRight, str, str, strlen(sep)
-	return str
-}
-
-append_to_file(file_path, list_of_lines, line:=0) {
-	;~ line = 0 is the last line
-	local file := []
-	local new_file, i
-	Loop, Read, %file_path%
-		file.push(A_LoopReadLine)
-	If (line<=0)
-		line := line + file.Length() + 1
-
-	file.InsertAt(line, list_of_lines*)
-
-	new_file := FileOpen(file_path, "w")
-	For i, line in file
-		new_file.WriteLine(line)
-	new_file.close()
-	return
-}
-
-EncodeDecodeURI(str, encode:=true, component:=true) {
-	static Doc, JS, txt
-	Doc := ComObjCreate("htmlfile")
-	Doc.write("<meta http-equiv=""X-UA-Compatible"" content=""IE=9"">")
-	JS := Doc.parentWindow
-	( Doc.documentMode < 9 && JS.execScript() )
-	txt := JS[ (encode ? "en" : "de") . "codeURI" . (component ? "Component" : "") ](str)
-	StringReplace txt, txt, ., `%2E
-	StringReplace txt, txt, !, `%21
-	return txt
-}
-
-in_rect(coo, rect) {
-	local LTcorner := rect[1]
-	local RBcorner := rect[2]
-	local dx := [Abs(RBcorner[1] - LTcorner[1]), Abs(RBcorner[2] - LTcorner[2])]
-	return ((Abs(RBcorner[1]+LTcorner[1]-2*coo[1])<dx[1]) and (Abs(RBcorner[2]+LTcorner[2]-2*coo[2])<dx[2]))
-}
-
-TimeStamp(date:=True, time:=True, format:="machine") {
-	local
-	stamp := ""
-	if date {
-		switch format {
-			case "machine":
-				stamp .= "yyyyMMdd"
-			case "long":
-				stamp .= "yyyyMMMMdd"
-			case "full":
-				stamp .= "yyyyMMMMdddd"
-			case "short":
-				stamp .= "yyMd"
-		}
+	if (copy) {
+		tmp := Clipboard
+		Clipboard =
+		Send, ^c
+		ClipWait, 1
 	}
-	if time {
-		switch format {
-			case "machine","long","full":
-				stamp .= "HHmmss"
-			case "short":
-				stamp .= "Hms"
-		}
+	if Clipboard
+		focus["clipboard"] := Clipboard
+	else
+		MsgBox % "Error: Clipboard is empty."
+
+	if (copy) {
+		Clipboard := tmp
+		ClipWait, 1
 	}
-	FormatTime, stamp,, %stamp%
-	return stamp
-}
 
-make_file_name(name) {
-	local
-	chars := [A_Space, "!", "@", "#", "$", "%", "^", "&", "*", "|", "\", "/", "?", ",", ":", ";"]
-	For each, char in chars
-		StringReplace name, name, %char%, `
-	return name
-}
-
-format_cmd(cmd) {
-	local
-	chars := [A_Space, "-", "!", "@", "#", "$", "%", "^", "&", "*", "|", "?"
-				,",", ";", ")", "("]
-	for each, char in chars
-		If InStr(cmd, char)
-			return quote(cmd)
-	return cmd
+	return focus["clipboard"]
 }
 
 render_hotstrings(list, prefix:=":*:", context_type="none", context="none") {
@@ -128,44 +49,23 @@ render_hotstrings(list, prefix:=":*:", context_type="none", context="none") {
 	return
 }
 
-get_screens_data(scr, debug:=0) {
-	local
-	SysGet, moncount, Monitorcount
-	scr["count"] := moncount
-	scr["order"] := []
-	Loop % moncount {
-		SysGet, mon, Monitor, %A_Index%
-		sysget, monName, MonitorName, %A_Index%
-		scr["enum"][monName] := A_Index
-		scr["order"].push(A_Index)
-		if (debug="screen")
-			msgbox % "screen name: " . monName . "`nscreen index: " . A_Index . "`nscreen number: " . scr["enum"][monName]
 
-		scr["Xrange"].push([monLeft, monRight])
-		scr["Yrange"].push([monTop, monBottom])
+; list handling
+inlist(o, l) {
+	local x, i
+	for i, x in l
+		if (o=x)
+			return true
+	return false
+}
 
-		scr["dim"].push([abs(monRight-monLeft), abs(monBottom-monTop)])
-
-		scr["COM"].push([(monRight+monLeft)/2, (monBottom+monTop)/2])
-	}
-	if (moncount>1) {
-		for _, i in range(moncount-1) {
-			for _, j in range(i+1, moncount) {
-				if (scr["Xrange"][i][1] > scr["Xrange"][j][1]) {
-					temp := scr["order"][i]
-					scr["order"][i] := scr["order"][j]
-					scr["order"][j] := temp
-				}
-			}
-		}
-	}
-	if (moncount<3) {
-		Loop % (3-moncount)
-		{
-			scr["order"].push(scr["order"][scr["order"].MaxIndex()])
-		}
-	}
-	return scr
+join(sep:=" ", params*) {
+	local i
+	str := ""
+    for i, param in params
+        str .= param . sep
+	StringTrimRight, str, str, strlen(sep)
+	return str
 }
 
 range(start, stop:="", delta:=1) {
@@ -209,6 +109,169 @@ All(sentence*) {
 	return True
 }
 
+
+;string handling
+quote(txt) {
+	txt = "%txt%"
+	return txt
+}
+
+EncodeDecodeURI(str, encode:=true, component:=true) {
+	static Doc, JS, txt
+	Doc := ComObjCreate("htmlfile")
+	Doc.write("<meta http-equiv=""X-UA-Compatible"" content=""IE=9"">")
+	JS := Doc.parentWindow
+	( Doc.documentMode < 9 && JS.execScript() )
+	txt := JS[ (encode ? "en" : "de") . "codeURI" . (component ? "Component" : "") ](str)
+	StringReplace txt, txt, ., `%2E
+	StringReplace txt, txt, !, `%21
+	return txt
+}
+
+TimeStamp(date:=True, time:=True, format:="machine") {
+	local
+	stamp := ""
+	if date {
+		switch format {
+			case "machine":
+				stamp .= "yyyyMMdd"
+			case "long":
+				stamp .= "yyyyMMMMdd"
+			case "full":
+				stamp .= "yyyyMMMMdddd"
+			case "short":
+				stamp .= "yyMd"
+		}
+	}
+	if time {
+		switch format {
+			case "machine","long","full":
+				stamp .= "HHmmss"
+			case "short":
+				stamp .= "Hms"
+		}
+	}
+	FormatTime, stamp,, %stamp%
+	return stamp
+}
+
+format_cmd(cmd) {
+	local
+	chars := [A_Space, "-", "!", "@", "#", "$", "%", "^", "&", "*", "|", "?"
+				,",", ";", ")", "("]
+	for each, char in chars
+		If InStr(cmd, char)
+			return quote(cmd)
+	return cmd
+}
+
+make_file_name(name) {
+	local
+	chars := [A_Space, "!", "@", "#", "$", "%", "^", "&", "*", "|", "\", "/", "?", ",", ":", ";"]
+	For each, char in chars
+		StringReplace name, name, %char%, `
+	return name
+}
+
+replace_Substrings(inputString, array, delim="%") {
+    ; Use a regular expression to find substrings encapsulated by %
+    if (pos := RegExMatch(inputString, delim . "(.*?)" . delim, match)) {
+        ; Extract the encapsulated substring without %
+        extracted := match1
+
+        ; Replace the encapsulated substring with array value
+        if (array[extracted]) {
+            replacement := array[extracted]
+            inputString := StrReplace(inputString, "%" extracted "%", replacement)
+        }
+        ; Move the position forward to find the next match
+        pos += StrLen(match)
+    }
+    return inputString
+}
+
+
+; file handling
+append_to_file(file_path, list_of_lines, line:=0) {
+	;~ line = 0 is the last line
+	local file := []
+	local new_file, i
+	Loop, Read, %file_path%
+		file.push(A_LoopReadLine)
+	If (line<=0)
+		line := line + file.Length() + 1
+
+	file.InsertAt(line, list_of_lines*)
+
+	new_file := FileOpen(file_path, "w")
+	For i, line in file
+		new_file.WriteLine(line)
+	new_file.close()
+	return
+}
+
+
+; basic arithmatic
+in_rect(coo, rect) {
+	local LTcorner := rect[1]
+	local RBcorner := rect[2]
+	local dx := [Abs(RBcorner[1] - LTcorner[1]), Abs(RBcorner[2] - LTcorner[2])]
+	return ((Abs(RBcorner[1]+LTcorner[1]-2*coo[1])<dx[1]) and (Abs(RBcorner[2]+LTcorner[2]-2*coo[2])<dx[2]))
+}
+
+between(a, b, x, type:="nums") {
+	switch type
+	{
+		case "time":
+			bigger_than_a := (a[1]<x[1]) | ((a[1]=x[1])&(a[2]<=x[2]))
+			smaller_than_b := (x[1]<b[1]) | ((x[1]=b[1]) & (x[2]<=b[2]))
+			return bigger_than_a & smaller_than_b
+		defult:
+			return (a<=x)&(x<=b)
+	}
+}
+
+; probing
+get_screens_data(scr, debug:=0) {
+	local
+	SysGet, moncount, Monitorcount
+	SysGet, prim_mon, MonitorPrimary
+	scr["count"] := moncount
+	scr["order"] := []
+	scr["main"] := prim_mon
+	Loop % moncount {
+		SysGet, mon, Monitor, %A_Index%
+		sysget, monName, MonitorName, %A_Index%
+
+		scr["enum"][monName] := A_Index
+		scr["order"].push(A_Index)
+		if (debug="screen")
+			msgbox % "screen name: " . monName . "`nscreen index: " . A_Index . "`nscreen number: " . scr["enum"][monName]
+
+		scr["Xrange"].push([monLeft, monRight])
+		scr["Yrange"].push([monTop, monBottom])
+
+		scr["dim"].push([abs(monRight-monLeft), abs(monBottom-monTop)])
+
+		scr["COM"].push([(monRight+monLeft)/2, (monBottom+monTop)/2])
+	}
+	if (moncount>1) {
+		for _, i in range(moncount-1) {
+			for _, j in range(i+1, moncount) {
+				if (scr["Xrange"][i][1] > scr["Xrange"][j][1]) {
+					temp := scr["order"][i]
+					scr["order"][i] := scr["order"][j]
+					scr["order"][j] := temp
+				}
+			}
+		}
+	}
+	if (moncount=2) {
+		scr["order"] := [scr["order"][1], scr["main"], scr["order"][2]]
+	}
+	return scr
+}
+
 AnyWinActive(param*) {
 	local
 	for Each, win in param {
@@ -226,6 +289,7 @@ WinID(name) {
 	else
 		return "ahk_exe " . name
 }
+
 
 IndexOf(list, var, delim:="") {
 	local
@@ -310,22 +374,6 @@ AHK_NOTIFYICON(wParam, lParam, msg, hwnd) {
 		;~ MsgBox, Notification timed out or was closed or right-clicked.
 		return 2
 	}
-}
-
-GetSelectedText() {
-	static focus := {}
-	focus["aWin"] := WinActive("A")
-	focus["clipboard"] := 0
-
-	tmp := Clipboard
-	Clipboard =
-	Send, ^c
-	ClipWait, 1
-	if Clipboard
-		focus["clipboard"] := Clipboard
-	Clipboard := tmp
-	ClipWait, 1
-	return focus["clipboard"]
 }
 
 print_text(string) {
@@ -468,22 +516,6 @@ parse_ini(ini_path, section="all") {
 	}
 }
 
-replace_Substrings(inputString, array, delim="%") {
-    ; Use a regular expression to find substrings encapsulated by %
-    if (pos := RegExMatch(inputString, delim . "(.*?)" . delim, match)) {
-        ; Extract the encapsulated substring without %
-        extracted := match1
-
-        ; Replace the encapsulated substring with array value
-        if (array[extracted]) {
-            replacement := array[extracted]
-            inputString := StrReplace(inputString, "%" extracted "%", replacement)
-        }
-        ; Move the position forward to find the next match
-        pos += StrLen(match)
-    }
-    return inputString
-}
 
 check_file_type(filePath) {
     ; Extract the file extension
@@ -496,53 +528,45 @@ check_file_type(filePath) {
     return fileExt
 }
 
-terminal_req (cmd, raw_args, as_admin, python, debug_mode) {
-local args := []
-if not raw_args
-		raw_args := []
+;~ terminal_req (cmd, raw_args, as_admin, python, debug_mode) {
+;~ local args := []
+;~ if not raw_args
+		;~ raw_args := []
 
-	cmd := format_cmd(cmd)
-	if raw_args {
-	For key, val in raw_args
-			args[key] := format_cmd(val)
-		cmd := join(,cmd, args*)
-	}
-
-	if python {
-		if apperent
-			cmd := "python " . cmd
-		else
-			cmd := "pythonw " . cmd
-
-	}
-
-	if apperent
-		cmd := " /k " . cmd
-	else
-		cmd := " /c " . cmd
-
-	if debug_mode {
-		msgbox, 6, Command to cmd, %cmd%
-		Clipboard := cmd
-	}
-
-	if admin
-		Run, *RunAs %comspec%%cmd%
-	else
-		Run, %comspec%%cmd%
-
-	return cmd
-}
-
-;~ between(a, b, x, type:="nums") {
-	;~ switch type
-	;~ {
-		;~ case "time":
-
-		;~ defult:
-			;~ return (a<=x)&(x<=b)
+	;~ cmd := format_cmd(cmd)
+	;~ if raw_args {
+	;~ For key, val in raw_args
+			;~ args[key] := format_cmd(val)
+		;~ cmd := join(,cmd, args*)
 	;~ }
+
+	;~ if python {
+		;~ if apperent
+			;~ cmd := "python " . cmd
+		;~ else
+			;~ cmd := "pythonw " . cmd
+
+	;~ }
+
+	;~ if apperent
+		;~ cmd := " /k " . cmd
+	;~ else
+		;~ cmd := " /c " . cmd
+
+	;~ if debug_mode {
+		;~ msgbox, 6, Command to cmd, %cmd%
+		;~ Clipboard := cmd
+	;~ }
+
+	;~ if admin
+		;~ Run, *RunAs %comspec%%cmd%
+	;~ else
+		;~ Run, %comspec%%cmd%
+
+	;~ return cmd
 ;~ }
+
+
 
 
 

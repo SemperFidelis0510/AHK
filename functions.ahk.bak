@@ -60,7 +60,6 @@ generateMenus() {
 }
 
 
-
 ; ideas
 voice_to_chatgpt() {
 	WinActivate, ahk_exe ChatGPT.exe
@@ -125,7 +124,6 @@ LoadHotstrings(file) {
 
 
 ;### Sensors
-
 listen(paths) {
 	local cmd, args
 	local prefix := "cmd"
@@ -331,6 +329,190 @@ SetGroup(win:="") {
 
 
 ;### Motors
+run_cmd(paths, cmd, raw_args:=0, apperent:=0, admin:=0, work_dir:="", script:=0) {
+	local key, val, x
+	local args := []
+	if not raw_args
+		raw_args := []
+
+	if (debug="cmd")
+		apperent := 1
+
+	if paths.scripts[cmd] {
+		cmd := paths.scripts[cmd]
+		script := true
+	}
+	else if (cmd = "")
+		InputBox, cmd, "Command", "Enter command:"
+	if (cmd = "")
+		return
+
+	cmd := format_cmd(cmd)
+	if raw_args {
+	For key, val in raw_args
+			args[key] := format_cmd(val)
+		cmd := join(,cmd, args*)
+	}
+
+	if script {
+		if apperent
+			cmd := "python " . cmd
+		else
+			cmd := "pythonw " . cmd
+
+	}
+
+	;~ if work_dir
+		;~ cmd := "cd /d " . work_dir . "`n" . cmd
+
+	if apperent
+		cmd := " /k " . cmd
+	else
+		cmd := " /c " . cmd
+
+
+	if apperent {
+		msgbox, 6, Command to cmd, %cmd%
+		Clipboard := cmd
+	}
+
+	if admin
+		Run, *RunAs %comspec%%cmd%
+	else
+		Run, %comspec%%cmd%
+
+	return
+}
+
+browser(paths, name, browse:="window", screen:=0, fs:=false){
+    local
+    global debug
+	If (debug=="browser")
+        msgbox % "browsing program: " . name
+
+	if paths[name]
+		path := paths[name]
+	else
+		msgbox, Error: No such path
+
+    switch browse {
+        case "window", "tab":
+			name := "ahk_exe " . name . ".exe"
+		case "winname":
+
+        case "folder":
+            name := "ahk_class " . name
+            path := "explorer " . path
+        case "group":
+			path := paths.groups_def[name]
+            name := "ahk_group " . name
+        case "setting":
+            path := name
+            name := "ahk_exe " . name . ".exe"
+        case "site":
+            path := paths[name]
+            name := "ahk_exe edge.exe"
+        case "app":
+            path := name
+    }
+
+	If (debug=="browser")
+        msgbox % "path to browser: " . path
+
+    if WinExist(name) {
+        if WinActive(name) {
+            switch browse {
+                case "tab":
+                    Send, ^{TAB}
+                default:
+                    WinActivateBottom, %name%
+            }
+        }
+        else
+            WinActivate, %name%
+    }
+    else {
+        try {
+			if (debug=="browser")
+				msgbox % "tyring to open path: " . path . " | for program named: " . name
+            Run %path%
+            WinWait %name%
+            WinActivate, %name%
+            WinWaitActive, %name%
+        }
+    }
+    if screen != 0
+        place_window(screen)
+    WinWaitActive, %name%
+    if fs
+        fullscreen(1)
+
+    return
+}
+
+SearchWeb(text:="", site:="google", fromClip:=0, by_context:=1, show_gui:=0) {
+; possible sites are: "google", "books", "translate", "wikipedia", "arxiv", "torrent", "ahk", "confluence"
+	local prefix := ""
+	local raw_query := ""
+	if ((not text) and fromClip)
+		text := GetSelectedText(!WinActive("ahk_exe vncviewer.exe"))
+
+
+	if not text
+		text := Input(title:="Search Query", question:="What whould you like to search?")
+	if not text
+		return
+
+
+	;~ if (show_gui) {
+		;~ Gui, choose_search:New, +Border +AlwaysOnTop, Search Where to Search
+		;~ Gui, choose_search:add, Radio, vSearchRadio, Option 1
+		;~ Gui, choose_search:add, Radio, vSearchRadio, Option 2
+		;~ Gui, choose_search:add, Button, gSubmit, OK
+		;~ Gui, choose_search:show
+
+	;~ }
+
+	if by_context {
+		if WinActive("ahk_exe SciTE.exe") {
+			prefix := "ahk "
+			site := "google"
+		}
+		else if WinActive("ahk_exe vncviewer.exe") {
+			site := "confluence"
+		}
+	}
+
+
+	If (site="translate") {
+		if (DetectLang(text)="EN")
+			site .= "En>He"
+		else
+			site .= "He>En"
+	}
+
+	if (prefix)
+		text := prefix . text
+
+	encoded_text := EncodeDecodeURI(text)
+
+
+	switch site
+	{
+		case "confluence":
+			raw_query := """" . encoded_text . """&queryString=" . encoded_text
+		default:
+			raw_query := encoded_text
+	}
+	query := SearchEngines[site] . raw_query
+
+	if (site="ahk")
+		query .= ".htm"
+
+	Run, %query%
+
+	return query
+}
 
 ChatGPT() {
 	CoordMode, Mouse, Screen
@@ -384,61 +566,6 @@ close_win() {
 		IfMsgBox, OK
 			Send !{F4}
 	}
-	return
-}
-
-run_cmd(paths, cmd, raw_args:=0, apperent:=0, admin:=0, work_dir:="", script:=0) {
-	local key, val, x
-	local args := []
-	if not raw_args
-		raw_args := []
-
-	if (debug="cmd")
-		apperent := 1
-
-	if paths.scripts[cmd] {
-		cmd := paths.scripts[cmd]
-		script := true
-	}
-	else if (cmd = "")
-		InputBox, cmd, "Command", "Enter command:"
-	if (cmd = "")
-		return
-
-	cmd := format_cmd(cmd)
-	if raw_args {
-	For key, val in raw_args
-			args[key] := format_cmd(val)
-		cmd := join(,cmd, args*)
-	}
-
-	if script {
-		if apperent
-			cmd := "python " . cmd
-		else
-			cmd := "pythonw " . cmd
-
-	}
-
-	;~ if work_dir
-		;~ cmd := "cd /d " . work_dir . "`n" . cmd
-
-	if apperent
-		cmd := " /k " . cmd
-	else
-		cmd := " /c " . cmd
-
-
-	if apperent {
-		msgbox, 6, Command to cmd, %cmd%
-		Clipboard := cmd
-	}
-
-	if admin
-		Run, *RunAs %comspec%%cmd%
-	else
-		Run, %comspec%%cmd%
-
 	return
 }
 
@@ -512,125 +639,11 @@ place_window(state:=1, Win:="A") {
 	return
 }
 
-SearchWeb(text:="", site:="google", fromClip:=0, by_context:=1) {
-; possible sites are: "google", "books", "translate", "wikipedia", "arxiv", "torrent", "ahk", "confluence"
-	local prefix := ""
-	local raw_query := ""
-	if ((not text) and fromClip)
-		text := GetSelectedText()
-
-	if not text
-		text := Input(title:="Search Query", question:="What whould you like to search?")
-	if not text
-		return
-
-
-	if by_context {
-		if WinActive("ahk_exe SciTE.exe") {
-			prefix := "ahk "
-			site := "google"
-		}
-		else if WinActive("ahk_exe vncviewer.exe") {
-			site := "confluence"
-		}
-	}
-
-
-	If (site="translate") {
-		if (DetectLang(text)="EN")
-			site .= "En>He"
-		else
-			site .= "He>En"
-	}
-
-	switch site
-	{
-		case "confluence":
-			raw_query := """" . text . """&queryString=" . text
-		default:
-			raw_query := prefix . text
-	}
-	query := SearchEngines[site] . EncodeDecodeURI(raw_query)
-
-	if (site="ahk")
-		query .= ".htm"
-
-	Run, %query%
-
-	return query
-}
-
 open_regedit(registry:=""){
 	if not registry
 		registry := "HKEY_CURRENT_USER"
 	run_cmd(pathclass["regjump"], [registry], 0, 1)
 	return
-}
-
-browser(paths, name, browse:="window", screen:=0, fs:=false){
-    local
-    global debug
-	If (debug=="browser")
-        msgbox % "browsing program: " . name
-
-	if paths[name]
-		path := paths[name]
-	else
-		msgbox, Error: No such path
-
-    switch browse {
-        case "window", "tab":
-			name := "ahk_exe " . name . ".exe"
-		case "winname":
-
-        case "folder":
-            name := "ahk_class " . name
-            path := "explor " . path
-        case "group":
-			path := paths.groups_def[name]
-            name := "ahk_group " . name
-        case "setting":
-            path := name
-            name := "ahk_exe " . name . ".exe"
-        case "site":
-            path := paths[name]
-            name := "ahk_exe edge.exe"
-        case "app":
-            path := name
-    }
-
-	If (debug=="browser")
-        msgbox % "path to browser: " . path
-
-    if WinExist(name) {
-        if WinActive(name) {
-            switch browse {
-                case "tab":
-                    Send, ^{TAB}
-                default:
-                    WinActivateBottom, %name%
-            }
-        }
-        else
-            WinActivate, %name%
-    }
-    else {
-        try {
-			if (debug=="browser")
-				msgbox % "tyring to open path: " . path . " | for program named: " . name
-            Run %path%
-            WinWait %name%
-            WinActivate, %name%
-            WinWaitActive, %name%
-        }
-    }
-    if screen != 0
-        place_window(screen)
-    WinWaitActive, %name%
-    if fs
-        fullscreen(1)
-
-    return
 }
 
 tooltip_img(img, rect:="dynamic", box_size:="default", fps:=50, halt:=false, coo_Ref:="screen", box_color:="44FF44") {
@@ -876,7 +889,8 @@ Spotify(paths, cmd) {
 	switch cmd
 	{
 		case "run":
-
+			;~ Send, +!{h}
+			;~ Send, ^{l}
 		case "like_song":
 			;~ run_cmd(paths, "spt playback --like")
 			Send, +!{b}
@@ -930,8 +944,7 @@ Reload_SciTE(paths) {
 
 Edit_SciTE(paths) {
 	local
-	scripts := ["console", "Keyboard_bindings", "functions", "utils", "constants"]
-
+	scripts := ["console", "Keyboard_bindings", "functions", "utils", "constants", "init"]
 	cmd := ""
 	for each, script in scripts
 		cmd .= script . ".ahk "
@@ -1435,23 +1448,25 @@ class Debuger {
 	}
 }
 
-class Schedule {
-	schedule_table := {"sunday": [], "monday": [], "tuesday": [], "wednesday": [], "thursday": [], "friday": [], "saturday": []}
+class ScheduleClass {
+	schedule_table := {"sunday": [], "Monday": [], "tuesday": [], "wednesday": [], "thursday": [], "friday": [], "saturday": []}
 	weekend := ["friday", "saturday"]
+	work_hours := [[8, 0], [21, 0]]
 	active_dates := []
-	__New(table){
+	current_time := {"year": A_YYYY, "month": A_MM, "day": A_DD, "WD": A_DDDD, "WW": SubStr(A_YWeek, -1), "hour": A_Hour, "minute": A_Min, "current": [A_Hour, A_Min]}
+
+	__New(){
+		table := {"sunday": [[8, 0], [21, 0]], "Monday": [[8, 0], [21, 0]], "tuesday": [[8, 0], [21, 0]], "wednesday": [[8, 0], [21, 0]], "thursday": [[8, 0], [21, 0]], "friday": [[0, 0], [0, 0]], "saturday": [[0, 0], [0, 0]]}
 		this.schedule_table := table
 		}
 
-	save() {
-	}
-
-	;~ check_active() {
-		;~ local
-		;~ FormatTime, CurrentDayTime,, dddd/HH/mm
-		;~ time_array := StrSplit(CurrentDayTime , "/")
-		;~ proper_time := 60*Integer(time_array[2]) + Integer(time_array[3])
+	;~ save() {
 	;~ }
+
+	check_working() {
+		working := between(this.schedule_table[this.current_time["WD"]][1], this.schedule_table[this.current_time["WD"]][2], this.current_time["current"], "time")
+		return working
+	}
 }
 ;### Context Menu
 

@@ -29,8 +29,8 @@ CapsLock::return
 ;### Script Control
 #Pause::Pause
 +#Pause::ExitApp
-#ScrollLock::Edit_SciTe(paths)
-+#ScrollLock:: Reload_SciTE(paths)
++#ScrollLock::Edit_SciTe(paths)
+#ScrollLock:: Reload_SciTE(paths)
 
 
 
@@ -46,8 +46,6 @@ CapsLock::return
 		listen(paths)
 
 	return
-
-
 
 ; program browsers
 #1:: browser(paths, "cmd", "window")
@@ -85,6 +83,8 @@ CapsLock::return
 #If (env_mode="game")
 	#d:: browser(paths, "Discord")
 	#s:: browser(paths, "SC2_x64")
+	#b:: browser(paths, "Battle.net")
+	#h:: browser(paths, "HeroesOfTheStorm_x64")
 	#m:: browser(paths, "MTGA")
 
 #If (env_mode="organize")

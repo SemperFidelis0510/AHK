@@ -15,19 +15,28 @@ SetWorkingDir, %pandora%\ahk
 #Include functions.ahk
 
 global paths := new PathClass
-paths.load()
+global schedule := new ScheduleClass
+
 
 if (debug!=0) {
 	AsAdmin := 0
 	change_env_mode(paths, "debug")
 }
 
-if (A_ComputerName="HEPHAESTUS")
-	change_env_mode(paths, "work", 1)
 
-If AsAdmin and not A_IsAdmin
-	Run, *RunAs autohotkey.exe "%A_ScriptFullPath%" /restart
+if ((A_ComputerName="HEPHAESTUS") or schedule.check_working())
+	change_env_mode("work")
 
+
+get_screens_data(screens, debug)
+paths.load()
+;~ generateMenus()
+HS := LoadHotstrings(paths["hotstring_ini"])
+render_hotstrings(HS)
+
+;~ Run watchdog.ahk
+
+; load groups
 for group, g_list in control_groups {
 	for _, program in g_list {
 		if InStr(program, "exe")
@@ -37,17 +46,9 @@ for group, g_list in control_groups {
 	}
 }
 
-get_screens_data(screens, debug)
 
-
-
-;~ generateMenus()
-
-iniFile := paths["ahk"] . "\hotstrings.ini"
-HS := LoadHotstrings(iniFile)
-render_hotstrings(HS)
-
-;~ Run watchdog.ahk
+If AsAdmin and not A_IsAdmin
+	Run, *RunAs autohotkey.exe "%A_ScriptFullPath%" /restart
 
 #If (work_mode!=0)
 	#Include vnc.ahk

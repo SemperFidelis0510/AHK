@@ -60,6 +60,12 @@ generateMenus() {
 }
 
 
+my_func() {
+	local
+	msgbox, % paths["ahk"]
+	return
+	}
+
 ; ideas
 voice_to_chatgpt() {
 	WinActivate, ahk_exe ChatGPT.exe
@@ -384,7 +390,96 @@ run_cmd(paths, cmd, raw_args:=0, apperent:=0, admin:=0, work_dir:="", script:=0)
 	return
 }
 
-browser(paths, name, browse:="window", screen:=0, fs:=false){
+place_window(state:=1, Win:="A", resize:=0) {
+	local aWin, s, i, j, scale, scr, windows
+	Scale := 0.8
+	aWin := WinActive(Win)
+	if (not aWin)
+	    return
+
+	switch state {
+		case "max":
+			WinGet, min_max, MinMax, ahk_id %aWin%
+			if (min_max=1)
+				WinRestore, ahk_id %aWin%
+			else
+				WinMaximize, ahk_id %aWin%
+			return
+		case "min":
+			WinGet, min_max, MinMax, ahk_id %aWin%
+			if (min_max=-1)
+				WinRestore, ahk_id %aWin%
+			else
+				WinMinimize, ahk_id %aWin%
+			return
+		case "unmax":
+			WinGetPos, xpos, ypos, wid, hit, ahk_id %aWin%
+			scr := det_screen(xpos+(wid/2), ypos+(hit/2))
+			WinGet, min_max, MinMax, ahk_id %aWin%
+			if (min_max = 1)
+				WinRestore, ahk_id %aWin%
+			WinMove, ahk_id %aWin%,,% screens["Xrange"][scr][1], % screens["Yrange"][scr][1]
+									, % Scale*screens["dim"][scr][1], % Scale*screens["dim"][scr][2]
+			return
+		case "unmin":
+			WinGet, windows, List
+			Loop, %Windows% {
+				i := Windows - A_Index + 1
+				WinGet, min_max, MinMax, % "ahk_id" windows%i%
+				if (min_max = -1) {
+					WinActivate % "ahk_id" windows%i%
+					WinWaitActive % "ahk_id" windows%i%
+					return
+				}
+			}
+			return
+		case 1, 2, 3, 4:
+			if (debug="screen") {
+				msgbox % "screen number sent: " . state
+				msgbox % "system screen name: " . screens["order"][state]
+				msgbox % screens["enum"][screens["order"][state]]
+			}
+
+
+			scr := screens["order"][state]
+			; get windows original state and dimensions
+			WinGetPos, xpos, ypos, wid, hig, ahk_id %aWin%
+			WinGet, min_max, MinMax, ahk_id %aWin%
+			if (scr = det_screen(xpos+(wid/2), ypos+(hig/2)))
+				return
+			if (min_max = 1)
+				WinRestore, ahk_id %aWin%
+
+			if resize {
+				wid := 0.5*screens["dim"][scr][1]
+				hig := 0.5*screens["dim"][scr][2]
+			}
+
+			; move the window
+			WinMove, ahk_id %aWin%,, % screens["Xrange"][scr][1], % screens["Yrange"][scr][1], % wid, % hig
+
+			;~ WinMove, ahk_id %aWin%,, % screens["Xrange"][scr][1], % screens["Yrange"][scr][1]
+									;~ , % 0.5*screens["dim"][scr][1], % 0.5*screens["dim"][scr][2]
+
+			if (debug="screen") {
+				msgbox % screens["Xrange"][scr][1]
+				msgbox % screens["Yrange"][scr][1]
+			}
+			if (min_max = 1)
+				place_window("max", Win)
+			else
+				if resize
+					place_window("unmax", Win)
+	}
+	if (Win = "A") {
+		WinActivate ahk_id %aWin%
+		WinWaitActive ahk_id %aWin%
+	}
+	return
+}
+
+
+browser(paths, name, browse:="window", screen:=0, fs:=false, force_new:=0){
     local
     global debug
 	If (debug=="browser")
@@ -446,7 +541,6 @@ browser(paths, name, browse:="window", screen:=0, fs:=false){
     WinWaitActive, %name%
     if fs
         fullscreen(1)
-
     return
 }
 
@@ -565,76 +659,6 @@ close_win() {
 		msgbox, 1, Quit, Are you sure you want to exit the program?, 10
 		IfMsgBox, OK
 			Send !{F4}
-	}
-	return
-}
-
-place_window(state:=1, Win:="A") {
-	local aWin, s, i, j, scale, scr, windows
-	Scale := 0.8
-	aWin := WinActive(Win)
-	if (not aWin)
-	    return
-
-	switch state {
-		case "max":
-			WinMaximize, ahk_id %aWin%
-		case "min":
-			WinMinimize, ahk_id %aWin%
-			return
-		case "unmax":
-			WinGetPos, xpos, ypos, wid, hit, ahk_id %aWin%
-			scr := det_screen(xpos+(wid/2), ypos+(hit/2))
-			WinGet, min_max, MinMax, ahk_id %aWin%
-			if (min_max = 1)
-				WinRestore, ahk_id %aWin%
-			WinMove, ahk_id %aWin%,,% screens["Xrange"][scr][1], % screens["Yrange"][scr][1]
-									, % Scale*screens["dim"][scr][1], % Scale*screens["dim"][scr][2]
-		case "unmin":
-			WinGet, windows, List
-			Loop, %Windows% {
-				i := Windows - A_Index + 1
-				WinGet, min_max, MinMax, % "ahk_id" windows%i%
-				if (min_max = -1) {
-					WinActivate % "ahk_id" windows%i%
-					WinWaitActive % "ahk_id" windows%i%
-					return
-				}
-			}
-		case 1, 2, 3, 4:
-			if (debug="screen")
-			{
-				msgbox % "screen number sent: " . state
-				msgbox % "system screen name: " . screens["order"][state]
-				msgbox % screens["enum"][screens["order"][state]]
-			}
-
-			;~ scr := screens["enum"][screens["order"][state]]
-			scr := screens["order"][state]
-			WinGetPos, xpos, ypos, wid, hit, ahk_id %aWin%
-			;~ msgbox % scr
-			if (scr = det_screen(xpos+(wid/2), ypos+(hit/2)))
-				return
-
-			WinGet, min_max, MinMax, ahk_id %aWin%
-			if (min_max = 1)
-				WinRestore, ahk_id %aWin%
-			WinMove, ahk_id %aWin%,, % screens["Xrange"][scr][1], % screens["Yrange"][scr][1]
-									, % 0.5*screens["dim"][scr][1], % 0.5*screens["dim"][scr][2]
-
-			if (debug="screen")
-			{
-				msgbox % screens["Xrange"][scr][1]
-				msgbox % screens["Yrange"][scr][1]
-			}
-			if (min_max = 1)
-				place_window("max", Win)
-			else
-				place_window("unmax", Win)
-	}
-	if (Win = "A") {
-		WinActivate ahk_id %aWin%
-		WinWaitActive ahk_id %aWin%
 	}
 	return
 }
@@ -931,22 +955,24 @@ SendMassage(txt) {
 ; SciTE
 Reload_SciTE(paths) {
 	local
-	script := WinExist("ahk_exe SciTE.exe")
-	WinGetTitle, script, ahk_id %script%
-	script := SubStr(script, 1, InStr(script, ".")-1)
-	if script in functions,constants,utils
-		script := "Keyboard_bindings"
+	;~ script := WinExist("ahk_exe SciTE.exe")
+	;~ WinGetTitle, script, ahk_id %script%
+	;~ script := SubStr(script, 1, InStr(script, ".")-1)
+	;~ if script in functions,constants,utils
+		;~ script := "Keyboard_bindings"
 
-	Run % "autohotkey.exe " . quote(paths["ahk"] . "\" . script . ".ahk") . " /restart"
+	;~ Run % "autohotkey.exe " . quote(paths["ahk"] . "\" . script . ".ahk") . " /restart"
+	Reload
 	return
 }
 
 Edit_SciTE(paths) {
 	local
-	scripts := ["console", "Keyboard_bindings", "functions", "utils", "constants", "init"]
+	scripts := ["console.ahk", "functions.ahk", "utils.ahk", "constants.ahk", "init.ahk", "memory/paths.ini", "Keyboard_bindings.ahk"]
 	cmd := ""
 	for each, script in scripts
-		cmd .= script . ".ahk "
+		cmd .= script . " "
+		;~ cmd .= script . ".ahk "
 	path := paths["SciTE"] . " -open:" . cmd
 
 	Run % path

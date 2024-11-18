@@ -11,7 +11,7 @@
 ;~ sort functions and utils
 
 
-#o:: my_func()
+;~ #o:: my_func()
 
 ;### General
 Insert::return

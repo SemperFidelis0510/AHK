@@ -25,7 +25,7 @@ if (debug!=0) {
 
 
 if ((A_ComputerName="HEPHAESTUS") or schedule.check_working())
-	change_env_mode("work")
+	change_env_mode(paths, "work", 1)
 
 
 get_screens_data(screens, debug)

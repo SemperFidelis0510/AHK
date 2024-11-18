@@ -47,8 +47,6 @@ CapsLock::return
 
 	return
 
-
-
 ; program browsers
 #1:: browser(paths, "cmd", "window")
 ^#1:: Run % paths["cmd"]

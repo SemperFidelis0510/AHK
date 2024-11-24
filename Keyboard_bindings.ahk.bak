@@ -81,9 +81,9 @@ ScrollLock:: Reload_SciTE(paths)
 	#s:: browser(paths, "programming", "group") ; programming softwares
 	#v:: browser(paths, "vpnui")
 	;~ #`:: browser(paths, "copilot", "site",0 , 1)
-	#`:: browser(paths, "chatgpt", "window",0 , 1)
+	#`:: browser(paths, "copilot", "window",0 , 1)
 #If (env_mode!="work")
-	#`:: browser(paths, "chatgpt", "window",0 , 1)
+	#`:: browser(paths, "copilot", "window",0 , 1)
 
 #If (env_mode="game")
 	#d:: browser(paths, "Discord")

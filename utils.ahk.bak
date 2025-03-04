@@ -266,21 +266,22 @@ between(a, b, x, type:="nums") {
 }
 
 ; displays
-get_screens_data(scr, debug:=0) {
+get_screens_data(scr) {
 	local
+	global debug
 	SysGet, moncount, Monitorcount
 	SysGet, prim_mon, MonitorPrimary
 	scr["count"] := moncount
 	scr["order"] := []
 	scr["main"] := prim_mon
+	ordering_list := []
 	Loop % moncount {
 		SysGet, mon, Monitor, %A_Index%
 		sysget, monName, MonitorName, %A_Index%
 
 		scr["enum"][monName] := A_Index
 		scr["order"].push(A_Index)
-		if (debug="screen")
-			msgbox % "screen name: " . monName . "`nscreen index: " . A_Index . "`nscreen number: " . scr["enum"][monName]
+		ordering_list.push(monLeft)
 
 		scr["Xrange"].push([monLeft, monRight])
 		scr["Yrange"].push([monTop, monBottom])
@@ -288,27 +289,35 @@ get_screens_data(scr, debug:=0) {
 		scr["dim"].push([abs(monRight-monLeft), abs(monBottom-monTop)])
 
 		scr["COM"].push([(monRight+monLeft)/2, (monBottom+monTop)/2])
+		if (debug="screen")
+			msgbox % "screen name: " . monName . "`nscreen index: " . A_Index . "`nscreen number: " . scr["enum"][monName]
 	}
-	;~ if (moncount>1) {
-		;~ ; sort bubble
+	if (moncount>1) {
+		scr["order"] := bubble_sort(scr["order"], ordering_list)
+		; sort bubble
 		;~ for i, _ in range(moncount - 1) {
 			;~ for j, _ in range(moncount - i) {
-				;~ if (scr["Xrange"][j][1] > scr["Xrange"][j + 1][1]) {
+				;~ if (ordering_list[j] > ordering_list[j + 1]) {
 					;~ ; Swap the order
-					;~ msgbox %  scr["Xrange"][j][1] . " | " . scr["Xrange"][j + 1][1]
 					;~ msgbox % "before: " . scr["order"][j] . " | " . scr["order"][j + 1]
+
 					;~ temp := scr["order"][j]
 					;~ scr["order"][j] := scr["order"][j + 1]
 					;~ scr["order"][j + 1] := temp
+
+					;~ temp := ordering_list[j]
+					;~ ordering_list[j] := ordering_list[j + 1]
+					;~ ordering_list[j + 1] := temp
 					;~ msgbox % "after: " . scr["order"][j] . " | " . scr["order"][j + 1]
 				;~ }
 			;~ }
 		;~ }
-	;~ }
-	;~ if (moncount=2) {
-		;~ scr["order"] := [scr["order"][1], scr["main"], scr["order"][2]]
-	;~ }
-	scr["order"] := [3,1,2]
+	}
+	if (moncount=2) {
+		scr["order"] := [scr["order"][1], scr["main"], scr["order"][2]]
+	}
+	if (debug="screen")
+		msgbox % scr["order"][1] scr["order"][2] scr["order"][3]
 	return scr
 }
 
@@ -559,6 +568,26 @@ parse_ini(ini_path, section="all") {
 	}
 }
 
+bubble_sort(list, order_cond:="") {
+	local i, j, n, temp
+	n := list.Length()
+	if (order_cond="")
+		order_cond := list
+	for i, _ in range(n - 1) {
+		for j, _ in range(n - i) {
+			if (order_cond[j] > order_cond[j+1]) {
+				temp := list[j]
+				list[j] := list[j + 1]
+				list[j + 1] := temp
+
+				temp := order_cond[j]
+				order_cond[j] := order_cond[j + 1]
+				order_cond[j + 1] := temp
+			}
+		}
+	}
+	return list
+}
 
 check_file_type(filePath) {
     ; Extract the file extension

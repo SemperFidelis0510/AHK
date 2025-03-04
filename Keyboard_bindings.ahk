@@ -67,7 +67,8 @@ ScrollLock:: Reload_SciTE(paths)
 
 #If (env_mode="std")
 	#d:: browser(paths, "Discord") ; discord
-	#m:: browser(paths, "olk")  ; mail
+	;~ #m:: browser(paths, "olk")  ; mail
+	#m:: browser(paths, "OUTLOOK")
 	#n:: browser(paths, "ONENOTE") ; onenote
 	#s:: browser(paths, "programming", "group") ; programming softwares
 
@@ -77,7 +78,8 @@ ScrollLock:: Reload_SciTE(paths)
 	#t:: browser(paths, "Microsoft To Do", "winname",, 2)
 	#d:: browser(paths, "documents", "group")
 	#n:: browser(paths, "ONENOTE")
-	#m:: browser(paths, "olk")
+	;~ #m:: browser(paths, "olk")
+	#m:: browser(paths, "OUTLOOK")
 	#s:: browser(paths, "programming", "group") ; programming softwares
 	#v:: browser(paths, "vpnui")
 	;~ #`:: browser(paths, "copilot", "site",0 , 1)

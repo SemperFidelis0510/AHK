@@ -289,26 +289,26 @@ get_screens_data(scr, debug:=0) {
 
 		scr["COM"].push([(monRight+monLeft)/2, (monBottom+monTop)/2])
 	}
-	;~ if (moncount>1) {
-		;~ ; sort bubble
-		;~ for i, _ in range(moncount - 1) {
-			;~ for j, _ in range(moncount - i) {
-				;~ if (scr["Xrange"][j][1] > scr["Xrange"][j + 1][1]) {
-					;~ ; Swap the order
-					;~ msgbox %  scr["Xrange"][j][1] . " | " . scr["Xrange"][j + 1][1]
-					;~ msgbox % "before: " . scr["order"][j] . " | " . scr["order"][j + 1]
-					;~ temp := scr["order"][j]
-					;~ scr["order"][j] := scr["order"][j + 1]
-					;~ scr["order"][j + 1] := temp
-					;~ msgbox % "after: " . scr["order"][j] . " | " . scr["order"][j + 1]
-				;~ }
-			;~ }
-		;~ }
-	;~ }
-	;~ if (moncount=2) {
-		;~ scr["order"] := [scr["order"][1], scr["main"], scr["order"][2]]
-	;~ }
-	scr["order"] := [3,2,1]
+	if (moncount>1) {
+		; sort bubble
+		for i, _ in range(moncount - 1) {
+			for j, _ in range(moncount - i) {
+				if (scr["Xrange"][j][1] > scr["Xrange"][j + 1][1]) {
+					; Swap the order
+					msgbox %  scr["Xrange"][j][1] . " | " . scr["Xrange"][j + 1][1]
+					msgbox % "before: " . scr["order"][j] . " | " . scr["order"][j + 1]
+					temp := scr["order"][j]
+					scr["order"][j] := scr["order"][j + 1]
+					scr["order"][j + 1] := temp
+					msgbox % "after: " . scr["order"][j] . " | " . scr["order"][j + 1]
+				}
+			}
+		}
+	}
+	if (moncount=2) {
+		scr["order"] := [scr["order"][1], scr["main"], scr["order"][2]]
+	}
+	;~ scr["order"] := [3,2,1]
 	return scr
 }
 

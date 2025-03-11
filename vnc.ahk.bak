@@ -33,19 +33,17 @@ stamp(name:="", type:="") {
 	return
 }
 
-;~ stamp(type, name) {
-	;~ FormatTime, CurrentDateTime,, dd/MM/yy
-	;~ SendInput % "// " . type . " by " . name . " at " . CurrentDateTime . ": "
-	;~ return
-;~ }
-
 ;~ alt_tab() {
 	;~ GetKeyState("alt", "p")
 ;~ }
 
+
+
+
+
 #IfWinActive ahk_exe vncviewer.exe
 
-AltTab::Send, ^+l
+!Tab::Send, ^+l
 
 ^WheelRight::+^k
 ^WheelLeft::+^l

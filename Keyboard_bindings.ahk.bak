@@ -67,7 +67,8 @@ ScrollLock:: Reload_SciTE(paths)
 
 #If (env_mode="std")
 	#d:: browser(paths, "Discord") ; discord
-	#m:: browser(paths, "olk")  ; mail
+	;~ #m:: browser(paths, "olk")  ; mail
+	#m:: browser(paths, "OUTLOOK")
 	#n:: browser(paths, "ONENOTE") ; onenote
 	#s:: browser(paths, "programming", "group") ; programming softwares
 
@@ -110,7 +111,6 @@ ScrollLock:: Reload_SciTE(paths)
 	#s:: browser(paths, "programming", "group") ; programming softwares
 
 	; system settigns
-	#F2::  browser(paths, "ms-settings:apps-volume", "setting") ; sound settings
 	#^F2:: browser(paths, "mmsys.cpl", "setting")
 	#F3::  browser(paths, "ms-settings:appsfeatures-app", "setting")
 	#^F3:: browser(paths, "ms-settings:about", "setting")
@@ -124,7 +124,7 @@ ScrollLock:: Reload_SciTE(paths)
 
 
 #If
-
+#F2::  browser(paths, "ms-settings:apps-volume", "setting") ; sound settings
 
 ; window shape and location
 #Numpad1::   place_window(1) ; move to TV

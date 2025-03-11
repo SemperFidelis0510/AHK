@@ -43,10 +43,11 @@ stamp(name:="", type:="") {
 
 #IfWinActive ahk_exe vncviewer.exe
 
-!Tab::Send, ^+l
+;~ !Tab::Send, ^+l
+;~ !Tab::
 
-^WheelRight::+^k
-^WheelLeft::+^l
+;~ ^WheelRight::+^k
+;~ ^WheelLeft::+^l
 
 $XButton1::
 {

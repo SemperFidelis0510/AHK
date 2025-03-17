@@ -769,7 +769,6 @@ recall(path) {
 change_env_mode(paths, mode, silent:=0) {
 	local
 	global env_mode, debug
-	;~ local env_name
 
 
 	if (paths.computer[1] = "HEPHAESTUS") {

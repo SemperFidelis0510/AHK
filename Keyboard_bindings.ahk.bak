@@ -83,9 +83,10 @@ ScrollLock:: Reload_SciTE(paths)
 	#s:: browser(paths, "programming", "group") ; programming softwares
 	#v:: browser(paths, "vpnui")
 	;~ #`:: browser(paths, "copilot", "site",0 , 1)
-	#`:: browser(paths, "copilot", "window",0 , 1)
+	;~ #`:: browser(paths, "copilot", "window",0 , 1)
+	#`:: browser(paths, "ChatGPT", 0, 1)
 #If (env_mode!="work")
-	#`:: browser(paths, "copilot", "window",0 , 1)
+	#`:: browser(paths, "ChatGPT", 0, 1)
 
 #If (env_mode="game")
 	#d:: browser(paths, "Discord")
@@ -127,9 +128,10 @@ ScrollLock:: Reload_SciTE(paths)
 #F2::  browser(paths, "ms-settings:apps-volume", "setting") ; sound settings
 
 ; window shape and location
-#Numpad1::   place_window(1) ; move to TV
-#Numpad2::   place_window(2) ; move to Wacom
-#Numpad3::   place_window(3) ; move to main screen
+#Numpad1::   place_window(1) ; move to left
+#Numpad2::   place_window(2) ; move to main screen
+#Numpad3::   place_window(3) ; move to right
+#Numpad8::   place_window(4) ; move to wacom
 #Numpad5::   place_window("max")
 #NumpadSub::   place_window("unmax")
 #NumpadDot::   min_all_wins()

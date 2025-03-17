@@ -292,26 +292,28 @@ get_screens_data(scr) {
 		if (debug="screen")
 			msgbox % "screen name: " . monName . "`nscreen index: " . A_Index . "`nscreen number: " . scr["enum"][monName]
 	}
-	if (moncount>1) {
+	if (moncount==4) {
+		local min_y := -2000
+		local min_idx
+		scr["order"] := []
+		ordering_list := []
+		Loop 4 {
+			if (scr["Yrange"][A_Index][1] > min_y) {
+				min_y := scr["Yrange"][A_Index][1]
+				min_idx := A_Index
+			}
+		}
+		Loop 4 {
+			if (A_Index != min_idx) {
+				scr["order"].push(A_Index)
+				ordering_list.push(scr["Xrange"][A_Index][1])
+			}
+		}
 		scr["order"] := bubble_sort(scr["order"], ordering_list)
-		; sort bubble
-		;~ for i, _ in range(moncount - 1) {
-			;~ for j, _ in range(moncount - i) {
-				;~ if (ordering_list[j] > ordering_list[j + 1]) {
-					;~ ; Swap the order
-					;~ msgbox % "before: " . scr["order"][j] . " | " . scr["order"][j + 1]
-
-					;~ temp := scr["order"][j]
-					;~ scr["order"][j] := scr["order"][j + 1]
-					;~ scr["order"][j + 1] := temp
-
-					;~ temp := ordering_list[j]
-					;~ ordering_list[j] := ordering_list[j + 1]
-					;~ ordering_list[j + 1] := temp
-					;~ msgbox % "after: " . scr["order"][j] . " | " . scr["order"][j + 1]
-				;~ }
-			;~ }
-		;~ }
+		scr["order"].push(min_idx)
+	}
+	if (moncount==3) {
+		scr["order"] := bubble_sort(scr["order"], ordering_list)
 	}
 	if (moncount=2) {
 		scr["order"] := [scr["order"][1], scr["main"], scr["order"][2]]

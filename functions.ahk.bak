@@ -470,6 +470,14 @@ place_window(state:=1, Win:="A", resize:=0) {
 			else
 				if resize
 					place_window("unmax", Win)
+
+			; added for hephaestus for vnc. move to different function
+			;~ if (WinActive("ahk_exe vncviewer.exe") & (A_ComputerName="HEPHAESTUS")) {
+				;~ if (state=1)
+					;~ send ^{Numpad8}
+				;~ if (state=2 or state=3)
+					;~ send ^{Numpad7}
+			;~ }
 	}
 	if (Win = "A") {
 		WinActivate ahk_id %aWin%
@@ -477,7 +485,6 @@ place_window(state:=1, Win:="A", resize:=0) {
 	}
 	return
 }
-
 
 browser(paths, name, browse:="window", screen:=0, fs:=false, force_new:=0){
     local

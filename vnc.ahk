@@ -33,15 +33,13 @@ stamp(name:="", type:="") {
 	return
 }
 
-;~ stamp(type, name) {
-	;~ FormatTime, CurrentDateTime,, dd/MM/yy
-	;~ SendInput % "// " . type . " by " . name . " at " . CurrentDateTime . ": "
-	;~ return
-;~ }
-
 ;~ alt_tab() {
 	;~ GetKeyState("alt", "p")
 ;~ }
+
+
+
+
 
 #IfWinActive ahk_exe vncviewer.exe
 
@@ -67,7 +65,6 @@ $XButton1::
 ;~ :X:todo::stamp("TODO", "btavor")
 ;~ :X:question::stamp("QUESTION", "btavor")
 
-::fog_flag::-inc_comp 0
 :X:datetime_::stamp()
 
 #IF

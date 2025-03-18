@@ -521,7 +521,20 @@ browser(paths, name, browse:="window", screen:=0, fs:=false, force_new:=0){
 	If (debug=="browser")
         msgbox % "path to browser: " . path
 
-    if WinExist(name) {
+	local open_new_win
+	print(GetKeyState("Shift"))
+	open_new_win := !WinExist(name) or GetKeyState("ctrl")
+	if open_new_win {
+        try {
+			if (debug=="browser")
+				msgbox % "tyring to open path: " . path . " | for program named: " . name
+            Run %path%
+            WinWait %name%
+            WinActivate, %name%
+            WinWaitActive, %name%
+        }
+    }
+    else {
         if WinActive(name) {
             switch browse {
                 case "tab":
@@ -533,16 +546,7 @@ browser(paths, name, browse:="window", screen:=0, fs:=false, force_new:=0){
         else
             WinActivate, %name%
     }
-    else {
-        try {
-			if (debug=="browser")
-				msgbox % "tyring to open path: " . path . " | for program named: " . name
-            Run %path%
-            WinWait %name%
-            WinActivate, %name%
-            WinWaitActive, %name%
-        }
-    }
+
     if screen != 0
         place_window(screen)
     WinWaitActive, %name%

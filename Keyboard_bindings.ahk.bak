@@ -66,34 +66,34 @@ ScrollLock:: Reload_SciTE(paths)
 ;~ #y:: browser(paths, "youtube", "site") ; TODO: fix
 
 #If (env_mode="std")
-	#d:: browser(paths, "Discord") ; discord
+	*#d:: browser(paths, "Discord") ; discord
 	;~ #m:: browser(paths, "olk")  ; mail
-	#m:: browser(paths, "OUTLOOK")
-	#n:: browser(paths, "ONENOTE") ; onenote
-	#s:: browser(paths, "programming", "group") ; programming softwares
+	*#m:: browser(paths, "OUTLOOK")
+	*#n:: browser(paths, "ONENOTE") ; onenote
+	*#s:: browser(paths, "programming", "group") ; programming softwares
 
 #If (env_mode="work")
-	#w:: browser(paths, "vncviewer") ; vncviewer
-	#e:: browser(paths, "ms-teams")
-	#t:: browser(paths, "Microsoft To Do", "winname",, 2)
-	#d:: browser(paths, "documents", "group")
-	#n:: browser(paths, "ONENOTE")
+	*#w:: browser(paths, "vncviewer") ; vncviewer
+	*#e:: browser(paths, "ms-teams")
+	*#t:: browser(paths, "Microsoft To Do", "winname",, 2)
+	*#d:: browser(paths, "documents", "group")
+	*#n:: browser(paths, "ONENOTE")
 	;~ #m:: browser(paths, "olk")
-	#m:: browser(paths, "OUTLOOK")
-	#s:: browser(paths, "programming", "group") ; programming softwares
-	#v:: browser(paths, "vpnui")
+	*#m:: browser(paths, "OUTLOOK")
+	*#s:: browser(paths, "programming", "group") ; programming softwares
+	*#v:: browser(paths, "vpnui")
 	;~ #`:: browser(paths, "copilot", "site",0 , 1)
 	;~ #`:: browser(paths, "copilot", "window",0 , 1)
-	#`:: browser(paths, "ChatGPT", 0, 1)
+	*#`:: browser(paths, "ChatGPT", 0, 1)
 #If (env_mode!="work")
-	#`:: browser(paths, "ChatGPT", 0, 1)
+	*#`:: browser(paths, "ChatGPT", 0, 1)
 
 #If (env_mode="game")
-	#d:: browser(paths, "Discord")
-	#s:: browser(paths, "SC2_x64")
-	#b:: browser(paths, "Battle.net")
-	#h:: browser(paths, "HeroesOfTheStorm_x64")
-	#m:: browser(paths, "MTGA")
+	*#d:: browser(paths, "Discord")
+	*#s:: browser(paths, "SC2_x64")
+	*#b:: browser(paths, "Battle.net")
+	*#h:: browser(paths, "HeroesOfTheStorm_x64")
+	*#m:: browser(paths, "MTGA")
 #If (env_mode!="game")
 	$XButton2::SearchWeb(,,1)
 	#XButton2::SearchWeb(,,1,0)

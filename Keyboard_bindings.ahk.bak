@@ -62,6 +62,7 @@ ScrollLock:: Reload_SciTE(paths)
 #f:: browser(paths, "CabinetWClass", "folder") ; TODO: fix path. make path env_mode specific. go between tabs
 
 #NumLock:: browser(paths, "Calculator", "winname")
+*#`:: browser(paths, "ChatGPT", 0, 1)
 
 ;~ #y:: browser(paths, "youtube", "site") ; TODO: fix
 
@@ -80,13 +81,12 @@ ScrollLock:: Reload_SciTE(paths)
 	*#n:: browser(paths, "ONENOTE")
 	;~ #m:: browser(paths, "olk")
 	*#m:: browser(paths, "OUTLOOK")
-	*#s:: browser(paths, "programming", "group") ; programming softwares
+	;~ *#s:: browser(paths, "programming", "group") ; programming softwares
 	*#v:: browser(paths, "vpnui")
-	;~ #`:: browser(paths, "copilot", "site",0 , 1)
-	;~ #`:: browser(paths, "copilot", "window",0 , 1)
-	*#`:: browser(paths, "ChatGPT", 0, 1)
+	*#s:: browser(paths, "cursor")
 #If (env_mode!="work")
-	*#`:: browser(paths, "ChatGPT", 0, 1)
+
+
 
 #If (env_mode="game")
 	*#d:: browser(paths, "Discord")

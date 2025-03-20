@@ -312,7 +312,7 @@ get_screens_data(scr) {
 		scr["order"] := bubble_sort(scr["order"], ordering_list)
 		scr["order"].push(min_idx)
 	}
-	if (moncount<=3) {
+	if (moncount==3) {
 		scr["order"] := bubble_sort(scr["order"], ordering_list)
 	}
 	if (moncount=2) {

@@ -19,7 +19,7 @@ global Null := False
 global group_names := ["programming", "communication", "documents", "internet"]
 global comp_names := ["CHRONOS7", "ZEUS2", "HEPHAESTUS", "PHYAROM2"]
 global HS := {}
-global control_groups := {"programming": ["SciTE.exe", "cursor", "pycharm64.exe", "Mathematica.exe", "hh.exe", "EXCEL.exe", "notepad++.exe", "notepad.exe"]
+global control_groups := {"programming": ["SciTE.exe", "cursor.exe", "pycharm64.exe", "Mathematica.exe", "hh.exe", "EXCEL.exe", "notepad++.exe", "notepad.exe"]
 						, "communication": ["WhatsApp", "OUTLOOK.exe", "Discord.exe", "ms-teams.exe"]
 						, "documents": ["notepad.exe", "EXCEL.exe", "WINWORD.exe", "PDFXEdit_NoPrintIsolation.exe", "PDFXEdit.exe", "AcroRd32.exe", "ONENOTE.exe"]
 						, "internet": ["msedge.exe", "chrome.exe"]}

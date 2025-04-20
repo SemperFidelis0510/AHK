@@ -486,7 +486,7 @@ place_window(state:=1, Win:="A", resize:=0) {
 	return
 }
 
-browser(paths, name, browse:="window", screen:=0, fs:=false, force_new:=0){
+browser(paths, name, browse:="window", screen:=0, fs:=false, force_new:=0, as_admin:=0){
     local
     global debug
 	If (debug=="browser")
@@ -525,9 +525,12 @@ browser(paths, name, browse:="window", screen:=0, fs:=false, force_new:=0){
 	open_new_win := !WinExist(name) or GetKeyState("ctrl")
 	if open_new_win {
         try {
-			if (debug=="browser")
-				msgbox % "tyring to open path: " . path . " | for program named: " . name
-            Run %path%
+			;~ if (debug=="browser")
+				;~ msgbox % "tyring to open path: " . path . " | for program named: " . name
+			if (as_admin)
+				Run %path%
+			else
+				ShellRun(path)
             WinWait %name%
             WinActivate, %name%
             WinWaitActive, %name%

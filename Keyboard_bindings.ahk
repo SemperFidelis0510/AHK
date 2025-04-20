@@ -68,10 +68,10 @@ ScrollLock:: Reload_SciTE(paths)
 
 #If (env_mode="std")
 	*#d:: browser(paths, "Discord") ; discord
-	;~ #m:: browser(paths, "olk")  ; mail
-	*#m:: browser(paths, "OUTLOOK")
+	#m:: browser(paths, "olk")  ; mail
+	;~ *#m:: browser(paths, "OUTLOOK")
 	*#n:: browser(paths, "ONENOTE") ; onenote
-	*#s:: browser(paths, "programming", "group") ; programming softwares
+	#s:: browser(paths, "programming", "group") ; programming softwares
 
 #If (env_mode="work")
 	*#w:: browser(paths, "vncviewer") ; vncviewer
@@ -79,21 +79,21 @@ ScrollLock:: Reload_SciTE(paths)
 	*#t:: browser(paths, "Microsoft To Do", "winname",, 2)
 	*#d:: browser(paths, "documents", "group")
 	*#n:: browser(paths, "ONENOTE")
-	;~ #m:: browser(paths, "olk")
-	*#m:: browser(paths, "OUTLOOK")
+	#m:: browser(paths, "olk")
+	;~ *#m:: browser(paths, "OUTLOOK")
 	*#x:: browser(paths, "programming", "group") ; programming softwares
 	*#v:: browser(paths, "vpnui")
-	*#s:: browser(paths, "cursor")
+	#s:: browser(paths, "cursor")
 #If (env_mode!="work")
 
 
 
 #If (env_mode="game")
-	*#d:: browser(paths, "Discord")
-	*#s:: browser(paths, "SC2_x64")
-	*#b:: browser(paths, "Battle.net")
-	*#h:: browser(paths, "HeroesOfTheStorm_x64")
-	*#m:: browser(paths, "MTGA")
+	#d:: browser(paths, "Discord")
+	#s:: browser(paths, "SC2_x64")
+	#b:: browser(paths, "Battle.net")
+	#h:: browser(paths, "HeroesOfTheStorm_x64")
+	#m:: browser(paths, "MTGA")
 #If (env_mode!="game")
 	$XButton2::SearchWeb(,,1)
 	#XButton2::SearchWeb(,,1,0)

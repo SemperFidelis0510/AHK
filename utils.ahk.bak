@@ -312,7 +312,7 @@ get_screens_data(scr) {
 		scr["order"] := bubble_sort(scr["order"], ordering_list)
 		scr["order"].push(min_idx)
 	}
-	if (moncount==3) {
+	if (moncount<=3) {
 		scr["order"] := bubble_sort(scr["order"], ordering_list)
 	}
 	if (moncount=2) {
@@ -601,6 +601,12 @@ check_file_type(filePath) {
     ; Return the file extension
     return fileExt
 }
+
+RunAsUser(program, args := "", workingDir := "") {
+    shell := ComObjCreate("Shell.Application")
+    shell.ShellExecute(program, args, workingDir, "open", 1)
+}
+
 
 ;~ terminal_req (cmd, raw_args, as_admin, python, debug_mode) {
 ;~ local args := []

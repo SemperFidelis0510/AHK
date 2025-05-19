@@ -986,7 +986,8 @@ Edit_SciTE(paths) {
 	for each, script in scripts
 		cmd .= script . " "
 		;~ cmd .= script . ".ahk "
-	path := paths["SciTE"] . " -open:" . cmd
+	; path := paths["SciTE"] . " -open:" . cmd
+	path := paths["cursor"] . " -open:" . cmd
 
 	Run % path
 	return
@@ -1524,7 +1525,7 @@ create_menu(submenu:="context"){
 	return
 }
 
-context_menu(paths, submenu:="context", item:=false){
+context_menu(paths, submenu:="context", item:=false) {
 	static text, title
 	global path
 	context_sensitive := {"LyX.exe": "context_LyX"}
@@ -1594,6 +1595,17 @@ context_menu(paths, submenu:="context", item:=false){
 	return
 }
 
-
+linux_clip() {
+	local clip_txt, hwnd, copy_txt
+	if WinActive("ahk_exe vncviewer.exe")
+		copy_txt := 0
+	else
+		copy_txt := 1
+	clip_txt := GetSelectedText(copy_txt,1)
+	MouseGetPos,,, hWnd
+	WinActivate, ahk_id %hwnd%
+	Send, ^v
+	return
+}
 
 

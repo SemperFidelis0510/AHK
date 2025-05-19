@@ -62,7 +62,6 @@ ScrollLock:: Reload_SciTE(paths)
 #f:: browser(paths, "CabinetWClass", "folder") ; TODO: fix path. make path env_mode specific. go between tabs
 
 #NumLock:: browser(paths, "Calculator", "winname")
-*#`:: browser(paths, "ChatGPT", 0, 1)
 
 ;~ #y:: browser(paths, "youtube", "site") ; TODO: fix
 
@@ -84,7 +83,9 @@ ScrollLock:: Reload_SciTE(paths)
 	*#x:: browser(paths, "programming", "group") ; programming softwares
 	*#v:: browser(paths, "vpnui")
 	#s:: browser(paths, "cursor")
+	*#`:: browser(paths, "Gemini", "winname",, 2)
 #If (env_mode!="work")
+	*#`:: browser(paths, "ChatGPT", 0, 1)
 
 
 

@@ -4,13 +4,14 @@ SetWorkingDir, %A_ScriptDir%
 
 
 ; basic computer actions
-GetSelectedText(copy:=1) {
+GetSelectedText(copy:=1, store:=0) {
 	static focus := {}
 	focus["aWin"] := WinActive("A")
 	focus["clipboard"] := 0
 
 	if (copy) {
-		tmp := Clipboard
+		if not store
+			tmp := Clipboard
 		Clipboard =
 		Send, ^c
 		ClipWait, 1
@@ -21,7 +22,8 @@ GetSelectedText(copy:=1) {
 		MsgBox % "Error: Clipboard is empty."
 
 	if (copy) {
-		Clipboard := tmp
+		if not store
+			Clipboard := tmp
 		ClipWait, 1
 	}
 
@@ -602,8 +604,7 @@ check_file_type(filePath) {
     return fileExt
 }
 
-ShellRun(prms*)
-{
+ShellRun(prms*) {
     shellWindows := ComObjCreate("{9BA05972-F6A8-11CF-A442-00A0C90A8F39}")
 
     desktop := shellWindows.Item(ComObj(19, 8)) ; VT_UI4, SCW_DESKTOP

@@ -527,10 +527,14 @@ browser(paths, name, browse:="window", screen:=0, fs:=false, force_new:=0, as_ad
         try {
 			;~ if (debug=="browser")
 				;~ msgbox % "tyring to open path: " . path . " | for program named: " . name
-			if (as_admin)
-				Run %path%
-			else
+			; if (as_admin)
+			; 	Run %path%
+			; else
+			; 	ShellRun(path)
+			if (name="cursor")
 				ShellRun(path)
+			else
+				Run %path%
             WinWait %name%
             WinActivate, %name%
             WinWaitActive, %name%

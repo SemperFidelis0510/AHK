@@ -1,8 +1,0 @@
-﻿#NoEnv
-#Warn
-#SingleInstance Force
-SendMode, input
-SetWorkingDir %A_ScriptDir%
-
-
-F6::reload

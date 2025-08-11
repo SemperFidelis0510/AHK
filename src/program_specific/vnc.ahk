@@ -1,7 +1,4 @@
-﻿#NoEnv
-#Warn
-
-store_hotstring() {
+﻿store_hotstring() {
 	local key, text0
 	InputBox, key, Key Name, Please enter key name
 	if !ErrorLevel {

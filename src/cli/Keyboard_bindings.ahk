@@ -1,19 +1,10 @@
-﻿;### Initialization
-;~ #Requires AutoHotkey v2.0
-; #NoEnv
-; #Warn
-; #SingleInstance Force
-
-; #Include Lib/init.ahk
-
-#Include Lib/functions.ahk
+﻿#Include Lib/functions.ahk
 
 ;~ ### TODOs
 ;~ change paths to global variable in functions
 ;~ sort functions and utils
+;~ write logger class
 
-
-;~ #o:: my_func()
 
 ;### General
 Insert::return
@@ -58,10 +49,10 @@ ScrollLock:: Reload_SciTE(paths)
 #3:: browser(paths, "programming", "group") ; programming softwares
 #4:: browser(paths, "communication", "group")
 
-
 #q:: browser(paths, "internet", "group") ; internet browsers
 #a:: browser(paths, "WhatsApp", "winname",, 2)  ; communication programs ~ fix path
 #f:: browser(paths, "CabinetWClass", "folder") ; TODO: fix path. make path env_mode specific. go between tabs
+*#`:: browser(paths, "ai_assistants", "group") ; AI assistants cycling
 
 #NumLock:: browser(paths, "Calculator", "winname")
 
@@ -85,9 +76,7 @@ ScrollLock:: Reload_SciTE(paths)
 	*#x:: browser(paths, "programming", "group") ; programming softwares
 	*#v:: browser(paths, "vpnui")
 	#s:: browser(paths, "cursor")
-	*#`:: browser(paths, "Gemini", "winname",, 2)
 #If (env_mode!="work")
-	*#`:: browser(paths, "ChatGPT", 0, 1)
 
 
 

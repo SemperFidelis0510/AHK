@@ -83,7 +83,7 @@ Search(text:="") {
 	WinGetTitle, win, ahk_id %win%
 
 	if not text
-		text := GetSelectedText()
+		text := GetSelectedText(,, debug)
 	;~ if not text
 		;~ double click cursor
 	if not text
@@ -329,7 +329,7 @@ SetGroup(win:="") {
 
 ;### Motors
 run_cmd(paths, cmd, raw_args:=0, apperent:=0, admin:=0, work_dir:="", script:=0) {
-	local key, val, x
+	local key, val, x, tmp
 	local args := []
 	if not raw_args
 		raw_args := []
@@ -346,20 +346,30 @@ run_cmd(paths, cmd, raw_args:=0, apperent:=0, admin:=0, work_dir:="", script:=0)
 	if (cmd = "")
 		return
 
-	cmd := format_cmd(cmd)
+    cmd := format_cmd(cmd)
 	if raw_args {
 	For key, val in raw_args
 			args[key] := format_cmd(val)
 		cmd := join(,cmd, args*)
 	}
 
-	if script {
-		if apperent
-			cmd := "python " . cmd
-		else
-			cmd := "pythonw " . cmd
+    ; auto-detect plain .py path as a script to run via Python
+    if (!script) {
+        tmp := cmd
+        StringReplace, tmp, tmp, ",, All
+        if (SubStr(tmp, -2) = ".py")
+            script := true
+    }
 
-	}
+    if script {
+        ; Route Python execution through conda wrapper to ensure env "ahk"
+        local wrapper
+        wrapper := A_ScriptDir . "\\scripts\\run_in_conda.bat"
+        if (apperent)
+            cmd := quote(wrapper) . " " . cmd
+        else
+            cmd := quote(wrapper) . " -w " . cmd
+    }
 
 	;~ if work_dir
 		;~ cmd := "cd /d " . work_dir . "`n" . cmd
@@ -555,11 +565,11 @@ browser(paths, name, browse:="window", screen:=0, fs:=false, force_new:=0, as_ad
 }
 
 SearchWeb(text:="", site:="google", fromClip:=0, by_context:=1, show_gui:=0) {
-; possible sites are: "google", "books", "translate", "wikipedia", "arxiv", "torrent", "ahk", "confluence"
+	; possible sites are: "google", "books", "translate", "wikipedia", "arxiv", "torrent", "ahk", "confluence"
 	local prefix := ""
 	local raw_query := ""
 	if ((not text) and fromClip)
-		text := GetSelectedText(!WinActive("ahk_exe vncviewer.exe"))
+		text := GetSelectedText(!WinActive("ahk_exe vncviewer.exe"),, debug)
 
 
 	if not text
@@ -642,8 +652,8 @@ RunScript(scriptName) {
 
     ; If the script isn't running (i.e., PID is 0), run it
     if (pid = 0) {
-        ; Use the Run command to start the Python script
-        Run, pythonw %scriptPath%
+        ; Use the Run command to start the Python script via conda wrapper
+        Run, % ComSpec " /c """ A_ScriptDir "\scripts\run_in_conda.bat"" -w """ scriptPath """"
     }
 }
 
@@ -1080,7 +1090,7 @@ class PathClass {
 		local
 		global comp_names, debug
 		if not ini_path
-			ini_path := A_ScriptDir . "..\..\memory\paths.ini"
+			ini_path := A_ScriptDir . "\config\paths.ini"
 
 		this.PL["pathList"] := ini_path
 
@@ -1454,6 +1464,7 @@ class BB {
 	}
 
 	get_clip() {
+		local tmp
 		tmp := Clipboard
 		Clipboard :=
 		Send, ^c

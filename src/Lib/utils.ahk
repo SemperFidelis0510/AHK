@@ -4,8 +4,9 @@ SetWorkingDir, %A_ScriptDir%
 
 
 ; basic computer actions
-GetSelectedText(copy:=1, store:=0) {
+GetSelectedText(copy:=1, store:=0, log_lvl:="") {
 	static focus := {}
+	local tmp
 	focus["aWin"] := WinActive("A")
 	focus["clipboard"] := 0
 
@@ -19,7 +20,8 @@ GetSelectedText(copy:=1, store:=0) {
 	if Clipboard
 		focus["clipboard"] := Clipboard
 	else
-		MsgBox % "Error: Clipboard is empty."
+		if (log_lvl=2)
+			MsgBox % "Error: Clipboard is empty."
 
 	if (copy) {
 		if not store

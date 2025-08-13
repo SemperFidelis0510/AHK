@@ -22,7 +22,7 @@ global control_groups := {"programming": ["SciTE.exe", "cursor.exe", "pycharm64.
 						, "communication": ["WhatsApp", "OUTLOOK.exe", "Discord.exe", "ms-teams.exe"]
 						, "documents": ["notepad.exe", "EXCEL.exe", "WINWORD.exe", "PDFXEdit_NoPrintIsolation.exe", "PDFXEdit.exe", "AcroRd32.exe", "ONENOTE.exe"]
 						, "internet": ["msedge.exe", "chrome.exe"]
-						, "ai_assistants": ["ChatGPT.exe", "Gemini.exe"]}
+						, "ai_assistants": ["ChatGPT.exe", "Gemini"]}
 
 
 global programming
